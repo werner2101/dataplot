@@ -20,12 +20,13 @@
 
 import gtk
 
-import plot
+import plot, datatree
 
 class MainWindow(gtk.Window):
 
     def __init__(self, args=None):
         gtk.Window.__init__(self)
+        self.set_default_size(600,400)
 
         self.vbox1 = gtk.VBox()
         self.add(self.vbox1)
@@ -33,6 +34,12 @@ class MainWindow(gtk.Window):
         self.hbox1 = gtk.HBox()
         self.vbox1.pack_start(self.hbox1)
             
+        scrollwin = gtk.ScrolledWindow()
+        scrollwin.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.hbox1.pack_start(scrollwin, True, True)
+        self.datatree = datatree.DataTree()
+        scrollwin.add_with_viewport(self.datatree)
+
         self.plotnotebook = gtk.Notebook()
         self.hbox1.pack_start(self.plotnotebook)
 
@@ -50,16 +57,12 @@ class MainWindow(gtk.Window):
 
         #self.menubar =
         #self.iconbar = 
-        #self.datatree =
         #self.plottree = 
 
         self.test()
 
 
     def test(self):
-        b = gtk.Button(label="Hello World")
-        b.connect('clicked', self.event_button_clicked)
-        self.hbox1.pack_start(b)
 
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
@@ -70,7 +73,5 @@ class MainWindow(gtk.Window):
         self.plotnotebook.append_page(self.plot2, gtk.Label("plot2"))
         
 
-    def event_button_clicked(self, ref):
-        print "hello", ref
 
 

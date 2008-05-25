@@ -38,6 +38,3 @@ class Plot(matplotlib.backends.backend_gtk.FigureCanvasGTK):
         p = f.add_subplot(111)
         p.plot(x,y, label="sin(x)")
         return f
-
-
-
