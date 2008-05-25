@@ -20,7 +20,7 @@
 
 import gtk
 
-import plot, datatree
+import plot, datatree, plottree
 
 class MainWindow(gtk.Window):
 
@@ -40,12 +40,20 @@ class MainWindow(gtk.Window):
         self.datatree = datatree.DataTree()
         scrollwin.add_with_viewport(self.datatree)
 
+        scrollwin = gtk.ScrolledWindow()
+        scrollwin.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.hbox1.pack_start(scrollwin, True, True)
+        self.plottree = plottree.PlotTree()
+        scrollwin.add_with_viewport(self.plottree)
+
         self.plotnotebook = gtk.Notebook()
         self.hbox1.pack_start(self.plotnotebook)
 
         self.lognotebook = gtk.Notebook()
         self.vbox1.pack_start(self.lognotebook)
 
+        self.infolog = gtk.TextView()
+        self.lognotebook.append_page(self.infolog, gtk.Label("infos"))
         self.messagelog = gtk.TextView()
         self.lognotebook.append_page(self.messagelog, gtk.Label("messages"))
         self.errorlog = gtk.TextView()
@@ -57,13 +65,23 @@ class MainWindow(gtk.Window):
 
         #self.menubar =
         #self.iconbar = 
-        #self.plottree = 
+
+        ########## signals
+        self.connect("delete_event", self.event_delete)
+
 
         self.test()
 
+    def event_delete(self, window, event):
+        self.handle_quit()
+
+    def handle_quit (self):
+        ## TODO: save plot project ??
+        gtk.main_quit()
 
     def test(self):
 
+        self.infolog.get_buffer().set_text("hello infobox")
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
 
