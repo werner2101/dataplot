@@ -25,10 +25,43 @@ class MainWindow(gtk.Window):
     def __init__(self, args=None):
         gtk.Window.__init__(self)
 
+        self.vbox1 = gtk.VBox()
+        self.add(self.vbox1)
+
+        self.hbox1 = gtk.HBox()
+        self.vbox1.pack_start(self.hbox1)
+            
+        self.plotnotebook = gtk.Notebook()
+        self.hbox1.pack_start(self.plotnotebook)
+
+        self.lognotebook = gtk.Notebook()
+        self.vbox1.pack_start(self.lognotebook)
+
+        self.messagelog = gtk.TextView()
+        self.lognotebook.append_page(self.messagelog, gtk.Label("messages"))
+        self.errorlog = gtk.TextView()
+        self.lognotebook.append_page(self.errorlog, gtk.Label("errors"))
+
+        self.statusbar = gtk.Statusbar()
+        self.vbox1.pack_start(self.statusbar, False)
+
+        #self.menubar = 
+        #self.datatree =
+        #self.plottree = 
+
+        self.test()
+
+
+    def test(self):
         b = gtk.Button(label="Hello World")
         b.connect('clicked', self.event_button_clicked)
-        self.add(b)
+        self.hbox1.pack_start(b)
+
+        self.errorlog.get_buffer().set_text("hello errorlog")
+        self.messagelog.get_buffer().set_text("hello messagelog")
+        
 
     def event_button_clicked(self, ref):
         print "hello", ref
+
 
