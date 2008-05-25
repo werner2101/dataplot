@@ -44,15 +44,29 @@ class DataTree(gtk.TreeView):
         ii = mm.append(None)
 
         mm.set(ii,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/1.png"),
-               1, "abc")
-        ic = mm.append(ii)
-        mm.set(ic,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/2.png"),
-               1, "abc_child")
-        ic = mm.append(ii)
-        mm.set(ic,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/2.png"),
-               1, "abc_sibling")
+               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_file.png"),
+               1, "file")
+        ii = mm.append(ii)
+        mm.set(ii,
+               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_folder.png"),
+               1, "folder")
+        it = mm.append(ii)
+        mm.set(it,
+               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_table.png"),
+               1, "table")
+        mm.set(mm.append(it),
+               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_array1d.png"),
+               1, "array1d")
+        mm.set(mm.append(it),
+               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_array1d.png"),
+               1, "array1d")
+        mm.set(mm.append(ii),
+               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_array2d.png"),
+               1, "array2d")
+        mm.set(mm.append(ii),
+               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_array3d.png"),
+               1, "array3d")
+
+
 
 
