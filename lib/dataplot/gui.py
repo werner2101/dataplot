@@ -20,6 +20,8 @@
 
 import gtk
 
+import plot
+
 class MainWindow(gtk.Window):
 
     def __init__(self, args=None):
@@ -45,7 +47,9 @@ class MainWindow(gtk.Window):
         self.statusbar = gtk.Statusbar()
         self.vbox1.pack_start(self.statusbar, False)
 
-        #self.menubar = 
+
+        #self.menubar =
+        #self.iconbar = 
         #self.datatree =
         #self.plottree = 
 
@@ -59,6 +63,11 @@ class MainWindow(gtk.Window):
 
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
+
+        self.plot1 = plot.Plot()
+        self.plotnotebook.append_page(self.plot1, gtk.Label("plot1"))
+        self.plot2 = plot.Plot()
+        self.plotnotebook.append_page(self.plot2, gtk.Label("plot2"))
         
 
     def event_button_clicked(self, ref):
