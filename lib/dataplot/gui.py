@@ -31,26 +31,34 @@ class MainWindow(gtk.Window):
         self.vbox1 = gtk.VBox()
         self.add(self.vbox1)
 
-        self.hbox1 = gtk.HBox()
-        self.vbox1.pack_start(self.hbox1)
+        self.vpan1 = gtk.VPaned()
+        self.vpan1.set_position(250)
+        self.vbox1.pack_start(self.vpan1)
+            
+        self.hpan1 = gtk.HPaned()
+        self.hpan1.set_position(300)
+        self.vpan1.pack1(self.hpan1, True, True)
+        self.hpan2 = gtk.HPaned()
+        self.hpan2.set_position(150)
+        self.hpan1.add(self.hpan2)
             
         scrollwin = gtk.ScrolledWindow()
         scrollwin.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.hbox1.pack_start(scrollwin, True, True)
+        self.hpan2.add1(scrollwin)
         self.datatree = datatree.DataTree()
         scrollwin.add_with_viewport(self.datatree)
 
         scrollwin = gtk.ScrolledWindow()
         scrollwin.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.hbox1.pack_start(scrollwin, True, True)
+        self.hpan2.add2(scrollwin)
         self.plottree = plottree.PlotTree()
         scrollwin.add_with_viewport(self.plottree)
 
         self.plotnotebook = gtk.Notebook()
-        self.hbox1.pack_start(self.plotnotebook)
+        self.hpan1.add(self.plotnotebook)
 
         self.lognotebook = gtk.Notebook()
-        self.vbox1.pack_start(self.lognotebook)
+        self.vpan1.pack2(self.lognotebook, False, True)
 
         self.infolog = gtk.TextView()
         self.lognotebook.append_page(self.infolog, gtk.Label("infos"))
@@ -61,6 +69,7 @@ class MainWindow(gtk.Window):
 
         self.statusbar = gtk.Statusbar()
         self.vbox1.pack_start(self.statusbar, False)
+
 
 
         #self.menubar =
