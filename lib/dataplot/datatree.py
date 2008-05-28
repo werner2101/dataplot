@@ -17,9 +17,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-
 import gtk, gobject, gtk.gdk
 import numpy
+
+import testplugin
+
+
 
 
 bitmaps = [["file", "data/bitmaps/data_file.png"],
@@ -40,6 +43,7 @@ class DataTree(gtk.TreeView):
         self.set_property("headers-visible", False)
 
         self.load_icons()
+        self.load_plugins()
         self.create_model()
         self.test()
 
@@ -47,6 +51,10 @@ class DataTree(gtk.TreeView):
         self.icons = {}
         for name,filename in bitmaps:
             self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
+
+    def load_plugins(self):
+        self.plugins = {}
+        self.plugins["test"] = testplugin.TestPlugin
 
     def create_model(self):
         model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING)
@@ -80,6 +88,22 @@ class DataTree(gtk.TreeView):
                0, self.icons["array3d"],
                1, "array3d")
 
+        self.load_file("abc filename", "abc", "test")
 
+
+    def load_file(self, filename, name, plugin):
+        mm = self.get_model()
+        ii = mm.append(None)
+        mm.set(ii, 0, self.icons["file"], 1, name)
+        parent = mm.get_path(ii)
+        self.plugins[plugin](filename, self, parent)
+
+    def newnode(self, parent, localparent, path, name, nodetype):
+        mm = self.get_model()
+        mm.set(mm.append(mm.get_iter(parent + tuple(localparent))),
+               0, self.icons[nodetype],
+               1, name)
+        
+        
 
 

@@ -24,6 +24,7 @@ pygtk.require('2.0')
 import sys, gtk, os.path
 
 sys.path.insert(0, os.path.abspath("lib/dataplot"))
+sys.path.insert(1, os.path.abspath("lib/dataplot/plugins"))
 
 from gui import *
 
