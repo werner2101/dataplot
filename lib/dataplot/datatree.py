@@ -22,6 +22,13 @@ import gtk, gobject, gtk.gdk
 import numpy
 
 
+bitmaps = [["file", "data/bitmaps/data_file.png"],
+           ["folder", "data/bitmaps/data_folder.png"],
+           ["table", "data/bitmaps/data_table.png"],
+           ["array1d","data/bitmaps/data_array1d.png"],
+           ["array2d", "data/bitmaps/data_array2d.png"],
+           ["array3d", "data/bitmaps/data_array3d.png"]]
+
 class DataTree(gtk.TreeView):
     def __init__(self):
         gtk.TreeView.__init__(self)
@@ -32,8 +39,14 @@ class DataTree(gtk.TreeView):
         self.set_property("enable-tree-lines", True)
         self.set_property("headers-visible", False)
 
+        self.load_icons()
         self.create_model()
         self.test()
+
+    def load_icons(self):
+        self.icons = {}
+        for name,filename in bitmaps:
+            self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
 
     def create_model(self):
         model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING)
@@ -44,27 +57,27 @@ class DataTree(gtk.TreeView):
         ii = mm.append(None)
 
         mm.set(ii,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_file.png"),
+               0, self.icons["file"],
                1, "file")
         ii = mm.append(ii)
         mm.set(ii,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_folder.png"),
+               0, self.icons["folder"],
                1, "folder")
         it = mm.append(ii)
         mm.set(it,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_table.png"),
+               0, self.icons["table"],
                1, "table")
         mm.set(mm.append(it),
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_array1d.png"),
+               0, self.icons["array1d"],
                1, "array1d")
         mm.set(mm.append(it),
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_array1d.png"),
+               0, self.icons["array1d"],
                1, "array1d")
         mm.set(mm.append(ii),
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_array2d.png"),
+               0, self.icons["array2d"],
                1, "array2d")
         mm.set(mm.append(ii),
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/data_array3d.png"),
+               0, self.icons["array3d"],
                1, "array3d")
 
 
