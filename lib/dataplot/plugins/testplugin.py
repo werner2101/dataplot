@@ -21,6 +21,8 @@
 import gtk, gobject, gtk.gdk
 import numpy
 
+import datasource
+
 testdata = [[[], ["root"], "testroot", "folder", None],
             [[0], ["root","table"], "testtable", "table", None],
             [[0], ["root","arrays"], "arrays", "folder", None],
@@ -29,8 +31,9 @@ testdata = [[[], ["root"], "testroot", "folder", None],
             [[0,1], ["root","arrays","data2d"], "data2d", "array2d", numpy.random.rand(20,20)],
             [[0,1], ["root","arrays","data3d"], "data3d", "array3d", numpy.random.rand(10,20,30)]]
 
-class TestPlugin:
+class TestPlugin(datasource.DataSource):
     def __init__(self, filename, tree, parent):
+        datasource.DataSource.__init__(self)
         self.filename = filename
         self.testdatadict = {}
         self.load(tree,parent)
@@ -38,7 +41,8 @@ class TestPlugin:
     def load(self, tree, parent):
         for dataset in testdata:
             localparent, path, name, nodetype, data = dataset
-            tree.newnode(parent, localparent, path, name, nodetype)
+            node = datasource.DataNode(name, nodetype, path, self)
+            tree.newnode(parent, localparent, node)
             if data != None:
                 self.testdatadict[tuple(path)] = data
                 

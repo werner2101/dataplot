@@ -24,7 +24,6 @@ import testplugin
 
 
 
-
 bitmaps = [["file", "data/bitmaps/data_file.png"],
            ["folder", "data/bitmaps/data_folder.png"],
            ["table", "data/bitmaps/data_table.png"],
@@ -61,33 +60,6 @@ class DataTree(gtk.TreeView):
         self.set_model(model)
 
     def test(self):
-        mm = self.get_model()
-        ii = mm.append(None)
-
-        mm.set(ii,
-               0, self.icons["file"],
-               1, "file")
-        ii = mm.append(ii)
-        mm.set(ii,
-               0, self.icons["folder"],
-               1, "folder")
-        it = mm.append(ii)
-        mm.set(it,
-               0, self.icons["table"],
-               1, "table")
-        mm.set(mm.append(it),
-               0, self.icons["array1d"],
-               1, "array1d")
-        mm.set(mm.append(it),
-               0, self.icons["array1d"],
-               1, "array1d")
-        mm.set(mm.append(ii),
-               0, self.icons["array2d"],
-               1, "array2d")
-        mm.set(mm.append(ii),
-               0, self.icons["array3d"],
-               1, "array3d")
-
         self.load_file("abc filename", "abc", "test")
 
 
@@ -98,11 +70,11 @@ class DataTree(gtk.TreeView):
         parent = mm.get_path(ii)
         self.plugins[plugin](filename, self, parent)
 
-    def newnode(self, parent, localparent, path, name, nodetype):
+    def newnode(self, parent, localparent, node):
         mm = self.get_model()
         mm.set(mm.append(mm.get_iter(parent + tuple(localparent))),
-               0, self.icons[nodetype],
-               1, name)
+               0, self.icons[node.gettype()],
+               1, node.getname())
         
         
 
