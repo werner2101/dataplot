@@ -32,20 +32,24 @@ class DataSource(gobject.GObject):
     def getinfo(self):
         print "getinfo not implemented in that DataSource plugin"
 
+gobject.type_register( DataSource )
+
+
+
 
 class DataNode(gobject.GObject):
 
-    datasource = None
-    datatype = None
     name = ""
+    datatype = None
     sourcepath = None
+    datasource = None
     
     def __init__(self, name, datatype, path, source):
         gobject.GObject.__init__(self)
         self.name = name
         self.datatype = datatype
-        self.path = path
-        self.source = source
+        self.sourcepath = path
+        self.datasource = source
 
     def getdata(self):
         self.datasource.getdata(self.sourcepath)
@@ -55,9 +59,11 @@ class DataNode(gobject.GObject):
 
     def getinfo(self):
         sourceinfo = self.datasource.getinfo()
-        return sourceinfo + "\nPath: " + str(self.sourcpath) \
+        return sourceinfo + "\nPath: " + str(self.sourcepath) \
                + "\nName: " + self.name + "\nType: " + self.datatype
 
     def gettype(self):
         return self.datatype
     
+
+gobject.type_register( DataNode )

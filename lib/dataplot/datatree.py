@@ -32,6 +32,14 @@ bitmaps = [["file", "data/bitmaps/data_file.png"],
            ["array3d", "data/bitmaps/data_array3d.png"]]
 
 class DataTree(gtk.TreeView):
+
+    __gsignals__ = { 'info-message':
+                     ( gobject.SIGNAL_NO_RECURSE,
+                       gobject.TYPE_NONE,
+                       (gobject.TYPE_STRING, )),
+                     }
+    
+
     def __init__(self):
         gtk.TreeView.__init__(self)
         column = gtk.TreeViewColumn(None, gtk.CellRendererPixbuf(), pixbuf=0)
@@ -46,6 +54,9 @@ class DataTree(gtk.TreeView):
         self.create_model()
         self.test()
 
+        ## SETUP signals
+        self.connect("cursor-changed", self.event_cursor_changed)
+
     def load_icons(self):
         self.icons = {}
         for name,filename in bitmaps:
@@ -56,7 +67,7 @@ class DataTree(gtk.TreeView):
         self.plugins["test"] = testplugin.TestPlugin
 
     def create_model(self):
-        model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING)
+        model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_OBJECT)
         self.set_model(model)
 
     def test(self):
@@ -66,16 +77,23 @@ class DataTree(gtk.TreeView):
     def load_file(self, filename, name, plugin):
         mm = self.get_model()
         ii = mm.append(None)
-        mm.set(ii, 0, self.icons["file"], 1, name)
         parent = mm.get_path(ii)
-        self.plugins[plugin](filename, self, parent)
+        datasource = self.plugins[plugin](filename, self, parent)
+        mm.set(ii, 0, self.icons["file"], 1, name, 2, datasource)
 
     def newnode(self, parent, localparent, node):
         mm = self.get_model()
         mm.set(mm.append(mm.get_iter(parent + tuple(localparent))),
                0, self.icons[node.gettype()],
-               1, node.getname())
-        
-        
+               1, node.getname(),
+               2, node)
 
-
+    def event_cursor_changed(self, treeview):
+        """
+        Print the infotext of the object that is attached into the
+        third column of the treemodel.
+        """
+        m = treeview.get_model()
+        path = treeview.get_cursor()[0]
+        self.emit('info-message', m[path][2].getinfo())
+        

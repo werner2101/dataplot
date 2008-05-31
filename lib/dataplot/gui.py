@@ -77,6 +77,7 @@ class MainWindow(gtk.Window):
 
         ########## signals
         self.connect("delete_event", self.event_delete)
+        self.datatree.connect("info-message", self.event_info_message)
 
 
         self.test()
@@ -87,6 +88,9 @@ class MainWindow(gtk.Window):
     def handle_quit (self):
         ## TODO: save plot project ??
         gtk.main_quit()
+
+    def event_info_message(self, widget, infotext):
+        self.infolog.get_buffer().set_text(infotext)
 
     def test(self):
 

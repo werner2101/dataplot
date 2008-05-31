@@ -32,6 +32,8 @@ testdata = [[[], ["root"], "testroot", "folder", None],
             [[0,1], ["root","arrays","data3d"], "data3d", "array3d", numpy.random.rand(10,20,30)]]
 
 class TestPlugin(datasource.DataSource):
+    name = "testplugin"
+    filename = "None"
     def __init__(self, filename, tree, parent):
         datasource.DataSource.__init__(self)
         self.filename = filename
@@ -52,8 +54,7 @@ class TestPlugin(datasource.DataSource):
         else:
             print "Not implemented yet"
 
-    def getinfo(self, path):
-        l = "Path: " + str(path)
-        t = self.testdatadict.get(tuple(path), None)
-        return l + "\nType: " + str(t)
+    def getinfo(self):
+        return "Sourcename: " + self.name \
+               + "\nFilename: " + self.filename
         
