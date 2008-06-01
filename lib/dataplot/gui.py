@@ -78,6 +78,7 @@ class MainWindow(gtk.Window):
         ########## signals
         self.connect("delete_event", self.event_delete)
         self.datatree.connect("info-message", self.event_info_message)
+        self.datatree.connect("table-activated", self.event_table_activated)
 
 
         self.test()
@@ -91,6 +92,11 @@ class MainWindow(gtk.Window):
 
     def event_info_message(self, widget, infotext):
         self.infolog.get_buffer().set_text(infotext)
+
+    def event_table_activated(self, widget, table):
+        print "event table-activated"
+        colnames = table.datasource.getcolumnnames(table.sourcepath)
+        print colnames
 
     def test(self):
 

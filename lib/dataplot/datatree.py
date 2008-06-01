@@ -37,7 +37,12 @@ class DataTree(gtk.TreeView):
                      ( gobject.SIGNAL_NO_RECURSE,
                        gobject.TYPE_NONE,
                        (gobject.TYPE_STRING, )),
+                     'table-activated':
+                     ( gobject.SIGNAL_NO_RECURSE,
+                       gobject.TYPE_NONE,
+                       (gobject.TYPE_OBJECT,))
                      }
+    
     
 
     def __init__(self):
@@ -56,6 +61,7 @@ class DataTree(gtk.TreeView):
 
         ## SETUP signals
         self.connect("cursor-changed", self.event_cursor_changed)
+        self.connect("row-activated", self.event_row_activated)
 
     def load_icons(self):
         self.icons = {}
@@ -101,4 +107,11 @@ class DataTree(gtk.TreeView):
         m = treeview.get_model()
         path = treeview.get_cursor()[0]
         self.emit('info-message', m[path][2].getinfo())
+
+    def event_row_activated(self, treeview, path, column):
+        m = treeview.get_model()
+        node = m[path][2]
+        if node.gettype() == "table":
+            self.emit('table-activated', node)
+
         
