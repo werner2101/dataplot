@@ -20,7 +20,7 @@
 
 import gtk
 
-import plot, datatree, plottree
+import plot, datatree, plottree, dataselection
 
 class MainWindow(gtk.Window):
 
@@ -94,9 +94,10 @@ class MainWindow(gtk.Window):
         self.infolog.get_buffer().set_text(infotext)
 
     def event_table_activated(self, widget, table):
-        print "event table-activated"
         colnames = table.datasource.getcolumnnames(table.sourcepath)
-        print colnames
+        sel = dataselection.DataSelection(self, colnames)
+        ret = sel.run()
+        print "selection return code", ret
 
     def test(self):
 
