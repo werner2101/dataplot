@@ -34,10 +34,11 @@ testdata = [[[], ["root"], "testroot", "folder", None],
 class TestPlugin(datasource.DataSource):
     name = "testplugin"
     filename = "None"
+    testdatadict = {}
+    
     def __init__(self, filename, tree, parent):
         datasource.DataSource.__init__(self)
         self.filename = filename
-        self.testdatadict = {}
         self.load(tree,parent)
         
     def load(self, tree, parent):
@@ -58,3 +59,8 @@ class TestPlugin(datasource.DataSource):
         return "Sourcename: " + self.name \
                + "\nFilename: " + self.filename
         
+    def getcolumnnames(self, path=None):
+        return ["Col1", "Col2"]
+
+    def gettableinfo(self, path):
+        return "Colnames: " + " ".join(self.getcolumnnames([])) + "\n Rows: 20"

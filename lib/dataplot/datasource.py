@@ -59,8 +59,12 @@ class DataNode(gobject.GObject):
 
     def getinfo(self):
         sourceinfo = self.datasource.getinfo()
-        return sourceinfo + "\nPath: " + str(self.sourcepath) \
-               + "\nName: " + self.name + "\nType: " + self.datatype
+        obj_info = "\nPath: " + str(self.sourcepath) \
+                   + "\nName: " + self.name + "\nType: " + self.datatype
+        data_info = ""
+        if self.datatype == "table":
+            data_info = "\nTableInfo:\n" + self.datasource.gettableinfo(self.sourcepath)
+        return sourceinfo + obj_info + data_info
 
     def gettype(self):
         return self.datatype

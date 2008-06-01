@@ -20,7 +20,7 @@
 import gtk, gobject, gtk.gdk
 import numpy
 
-import testplugin
+import testplugin, gnucapplugin
 
 
 
@@ -65,6 +65,7 @@ class DataTree(gtk.TreeView):
     def load_plugins(self):
         self.plugins = {}
         self.plugins["test"] = testplugin.TestPlugin
+        self.plugins["gnucap"] = gnucapplugin.GnucapPlugin
 
     def create_model(self):
         model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_OBJECT)
@@ -72,6 +73,10 @@ class DataTree(gtk.TreeView):
 
     def test(self):
         self.load_file("abc filename", "abc", "test")
+        self.load_file("lib/dataplot/plugins/testdata/dc_current_gain_t0.data",
+                       "dc_current_gain_t0.data", "gnucap")
+        self.load_file("lib/dataplot/plugins/testdata/saturation_voltages_t0.data",
+                       "saturation_voltages_t0.data", "gnucap")
 
 
     def load_file(self, filename, name, plugin):
