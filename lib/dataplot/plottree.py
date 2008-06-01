@@ -22,7 +22,21 @@ import gtk, gobject, gtk.gdk
 import numpy
 
 
+bitmaps = [["notebook", "data/bitmaps/plot_notebook.png"],
+           ["singleplot", "data/bitmaps/plot_singleplot.png"],
+           ["xaxis", "data/bitmaps/plot_xaxis.png"],
+           ["yaxis", "data/bitmaps/plot_yaxis.png"],
+           ["math", "data/bitmaps/plot_math.png"]]
+
 class PlotTree(gtk.TreeView):
+
+
+    __gsignals__ = { 'info-message':
+                     ( gobject.SIGNAL_NO_RECURSE,
+                       gobject.TYPE_NONE,
+                       (gobject.TYPE_STRING, )),
+                     }
+    
     def __init__(self):
         gtk.TreeView.__init__(self)
         column = gtk.TreeViewColumn(None, gtk.CellRendererPixbuf(), pixbuf=0)
@@ -32,8 +46,14 @@ class PlotTree(gtk.TreeView):
         self.set_property("enable-tree-lines", True)
         self.set_property("headers-visible", False)
 
+        self.load_icons()
         self.create_model()
         self.test()
+
+    def load_icons(self):
+        self.icons = {}
+        for name,filename in bitmaps:
+            self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
 
     def create_model(self):
         model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING)
@@ -42,18 +62,31 @@ class PlotTree(gtk.TreeView):
     def test(self):
         mm = self.get_model()
         ip = mm.append(None)
+        mm.set(ip, 0, self.icons["notebook"], 1, "plot1")
 
-        mm.set(ip,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/plot_notebook.png"),
-               1, "plot notebook")
+        ip = mm.append(None)
+        mm.set(ip, 0, self.icons["notebook"], 1, "plot2")
+        
         isp = mm.append(ip)
-        mm.set(isp,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/plot_singleplot.png"),
-               1, "single plot1")
-        isp = mm.append(ip)
-        mm.set(isp,
-               0, gtk.gdk.pixbuf_new_from_file("data/bitmaps/plot_singleplot.png"),
-               1, "single plot2")
+        mm.set(isp, 0, self.icons["singleplot"], 1, "singleplot")
+        
+        ix = mm.append(isp)
+        mm.set(ix, 0, self.icons["xaxis"], 1, "X-Data1")
+        
+        iy = mm.append(ix)
+        mm.set(iy, 0, self.icons["yaxis"], 1, "Y-Data1")
+        iy = mm.append(ix)
+        mm.set(iy, 0, self.icons["yaxis"], 1, "Y-Data2")
+
+        ix = mm.append(isp)
+        mm.set(ix, 0, self.icons["xaxis"], 1, "X-Data2")
+        
+        iy = mm.append(ix)
+        mm.set(iy, 0, self.icons["yaxis"], 1, "Y-Data1")
+        iy = mm.append(ix)
+        mm.set(iy, 0, self.icons["math"], 1, "Math-Block")
+
+        
 
 
 
