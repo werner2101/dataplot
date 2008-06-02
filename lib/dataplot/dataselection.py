@@ -22,6 +22,8 @@ import gtk, gobject
 
 class DataSelection(gtk.Dialog):
 
+    returns = {}
+
     def __init__(self, parent, columnnames):
         gtk.Dialog.__init__(self, "Row Selection", parent,
                             gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -30,6 +32,7 @@ class DataSelection(gtk.Dialog):
 
         scrollwin = gtk.ScrolledWindow()
         scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scrollwin.set_size_request(-1, 200)
         
         self.listview = gtk.TreeView()
         x_cell = gtk.CellRendererToggle()
@@ -55,24 +58,38 @@ class DataSelection(gtk.Dialog):
         self.show_all()
         
         
-
         #################### Signals
         self.connect("response", self.event_response)
+        self.connect("destroy", self.event_destroy)
+
         
+    def event_destroy(self, widget):
+        self.destroy()
+    
 
     def event_response(self, widget, response_id):
         if response_id == gtk.RESPONSE_ACCEPT:
-            print "response OK"
-            self.destroy()
-            return (["xx"],["yy","yy"])
-        else:
-            print "response not OK: %i" % response_id
-            self.destroy()
+            x,y = None, []
+            for row in self.listview.get_model():
+                if row[0] == True:
+                    x = row[2]
+                if row[1] == True:
+                    y.append(row[2])
+            self.returns["x_column"] = x
+            self.returns["y_columns"] = y
+        self.destroy()
             
         
     def x_toggle(self, cell, path, listview):
+        """
+        Callback when the toggle buttons of the X-row is toggled.
+        Only allow one x-value to be selected from the x-row
+        """
         mm = listview.get_model()
-        mm[path][0] = not mm[path][0]
+        newstate = not mm[path][0]
+        for row in mm:
+            row[0] = False
+        mm[path][0] = newstate
         
     
     def y_toggle(self, cell, path, listview):

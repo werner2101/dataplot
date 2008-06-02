@@ -26,15 +26,12 @@ import matplotlib.backends.backend_gtk
 
 
 class Plot(matplotlib.backends.backend_gtk.FigureCanvasGTK):
+
+    figure = None
+
     def __init__(self):
-        f = matplotlib.figure.Figure()
-        matplotlib.backends.backend_gtk.FigureCanvasGTK.__init__(self,f)
+        self.figure = matplotlib.figure.Figure()
+        matplotlib.backends.backend_gtk.FigureCanvasGTK.__init__(self,self.figure)
+        self.figure.add_subplot(111)
 
-        self.test(f)
 
-    def test(self,f):
-        x = numpy.linspace(0, 10, 100)
-        y = numpy.sin(x)
-        p = f.add_subplot(111)
-        p.plot(x,y, label="sin(x)")
-        return f

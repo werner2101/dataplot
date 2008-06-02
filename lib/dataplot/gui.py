@@ -95,9 +95,17 @@ class MainWindow(gtk.Window):
 
     def event_table_activated(self, widget, table):
         colnames = table.datasource.getcolumnnames(table.sourcepath)
-        sel = dataselection.DataSelection(self, colnames)
-        ret = sel.run()
-        print "selection return code", ret
+        dialog = dataselection.DataSelection(self, colnames)
+        retcode = dialog.run()
+        print dialog.returns["x_column"], dialog.returns["y_columns"], retcode
+
+    def new_plot(self, name):
+        plot1 = plot.Plot()
+        self.plotnotebook.append_page(plot1, gtk.Label(name))
+
+    def delete_plot(self, name):
+        TBD = 1
+
 
     def test(self):
 
@@ -105,11 +113,9 @@ class MainWindow(gtk.Window):
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
 
-        self.plot1 = plot.Plot()
-        self.plotnotebook.append_page(self.plot1, gtk.Label("plot1"))
-        self.plot2 = plot.Plot()
-        self.plotnotebook.append_page(self.plot2, gtk.Label("plot2"))
+        self.new_plot("plot1")
+        self.new_plot("plot2")
         
-
+    
 
 
