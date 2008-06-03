@@ -31,6 +31,8 @@ class MainWindow(gtk.Window):
         self.vbox1 = gtk.VBox()
         self.add(self.vbox1)
 
+        self.init_toolbar()
+
         self.vpan1 = gtk.VPaned()
         self.vpan1.set_position(250)
         self.vbox1.pack_start(self.vpan1)
@@ -83,6 +85,28 @@ class MainWindow(gtk.Window):
 
         self.test()
 
+
+    def init_toolbar(self):
+        """
+        Load all toolbar icons and add them to the main window
+        """
+        toolbar = gtk.Toolbar()
+        self.vbox1.pack_start(toolbar, False, False, 0)
+
+        icon_newplot = gtk.Image()
+        icon_newplot.set_from_file('data/bitmaps/menu_newplot.png')
+        button_newplot = gtk.ToolButton(icon_newplot, 'New Plot')
+        button_newplot.connect('clicked', self.event_new_plot)
+        toolbar.add(button_newplot)
+
+        icon_deleteplot = gtk.Image()
+        icon_deleteplot.set_from_file('data/bitmaps/menu_deleteplot.png')
+        button_deleteplot = gtk.ToolButton(icon_deleteplot, 'Delete Plot')
+        button_deleteplot.connect('clicked', self.event_delete_plot)
+        toolbar.add(button_deleteplot)
+
+        
+
     def event_delete(self, window, event):
         self.handle_quit()
 
@@ -99,12 +123,17 @@ class MainWindow(gtk.Window):
         retcode = dialog.run()
         print dialog.returns["x_column"], dialog.returns["y_columns"], retcode
 
+    def event_new_plot(self, widget):
+        self.new_plot("newplot")
+
     def new_plot(self, name):
         plot1 = plot.Plot()
         self.plotnotebook.append_page(plot1, gtk.Label(name))
+        plot1.show()
+        
 
-    def delete_plot(self, name):
-        TBD = 1
+    def event_delete_plot(self, name):
+        self.plotnotebook.remove_page(self.plotnotebook.get_current_page())
 
 
     def test(self):
