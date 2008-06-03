@@ -73,14 +73,15 @@ class MainWindow(gtk.Window):
         self.vbox1.pack_start(self.statusbar, False)
 
 
+        self.new_plot("plot1")
 
         #self.menubar =
-        #self.iconbar = 
 
         ########## signals
         self.connect("delete_event", self.event_delete)
         self.datatree.connect("info-message", self.event_info_message)
         self.datatree.connect("table-activated", self.event_table_activated)
+        self.plottree.connect("info-message", self.event_info_message)
 
 
         self.test()
@@ -130,10 +131,15 @@ class MainWindow(gtk.Window):
         plot1 = plot.Plot()
         self.plotnotebook.append_page(plot1, gtk.Label(name))
         plot1.show()
+        self.plottree.add_plot(name)
         
 
     def event_delete_plot(self, name):
-        self.plotnotebook.remove_page(self.plotnotebook.get_current_page())
+        nth = self.plotnotebook.get_current_page()
+        self.plotnotebook.remove_page(nth)
+        self.plottree.remove_plot(nth)
+        if self.plotnotebook.get_n_pages() == 0:
+            self.new_plot("plot1")
 
 
     def test(self):
@@ -142,7 +148,6 @@ class MainWindow(gtk.Window):
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
 
-        self.new_plot("plot1")
         self.new_plot("plot2")
         
     

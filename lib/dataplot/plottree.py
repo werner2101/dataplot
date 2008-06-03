@@ -48,7 +48,11 @@ class PlotTree(gtk.TreeView):
 
         self.load_icons()
         self.create_model()
-        self.test()
+        #self.test()
+
+        ## SETUP signals
+        self.connect("cursor-changed", self.event_cursor_changed)
+        
 
     def load_icons(self):
         self.icons = {}
@@ -56,39 +60,112 @@ class PlotTree(gtk.TreeView):
             self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
 
     def create_model(self):
-        model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING)
+        model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_OBJECT)
         self.set_model(model)
 
+    def add_node(self, parentpath, nodeobject):
+        m = self.get_model()
+        if not parentpath:
+            i_new = m.append(None)
+        else:
+            i = m.get_iter(parentpath)
+            i_new = m.append(i)
+        m.set(i_new, 0, self.icons[nodeobject.nodetype], 1, nodeobject.name, 2, nodeobject)
+        return m.get_path(i_new)
+
+    def add_plot(self, name, subplotname="subplot"):
+        plot = PlotNode(name)
+        path = self.add_node(None, plot)
+        subplot = SubplotNode("subplot")
+        spath1 = self.add_node(path, subplot)
+        return spath1
+
+    def remove_plot(self, nth):
+        m = self.get_model()
+        i = m.get_iter((nth,))
+        m.remove(i)
+
+    def event_cursor_changed(self, treeview):
+        """
+        Print the infotext of the object that is attached into the
+        third column of the treemodel.
+        """
+        m = self.get_model()
+        path = self.get_cursor()[0]
+        self.emit('info-message', m[path][2].getinfo())
+
+
     def test(self):
-        mm = self.get_model()
-        ip = mm.append(None)
-        mm.set(ip, 0, self.icons["notebook"], 1, "plot1")
+        plot = PlotNode("plot1")
+        path = self.add_node(None, plot)
 
-        ip = mm.append(None)
-        mm.set(ip, 0, self.icons["notebook"], 1, "plot2")
+        plot = PlotNode("plot2")
+        path = self.add_node(None, plot)
+
+        subplot = SubplotNode("subplot1")
+        spath1 = self.add_node(path, subplot)
+
+        xaxis = DataNode("x-axis","xaxis")
+        xpath = self.add_node(spath1, xaxis)
+
+        yaxis = DataNode("y-axis1", "yaxis")
+        self.add_node(xpath, yaxis)
+        yaxis = DataNode("y-axis2", "yaxis")
+        self.add_node(xpath, yaxis)
         
-        isp = mm.append(ip)
-        mm.set(isp, 0, self.icons["singleplot"], 1, "singleplot")
-        
-        ix = mm.append(isp)
-        mm.set(ix, 0, self.icons["xaxis"], 1, "X-Data1")
-        
-        iy = mm.append(ix)
-        mm.set(iy, 0, self.icons["yaxis"], 1, "Y-Data1")
-        iy = mm.append(ix)
-        mm.set(iy, 0, self.icons["yaxis"], 1, "Y-Data2")
+        subplot = SubplotNode("subplot2")
+        spath2 = self.add_node(path, subplot)
 
-        ix = mm.append(isp)
-        mm.set(ix, 0, self.icons["xaxis"], 1, "X-Data2")
-        
-        iy = mm.append(ix)
-        mm.set(iy, 0, self.icons["yaxis"], 1, "Y-Data1")
-        iy = mm.append(ix)
-        mm.set(iy, 0, self.icons["math"], 1, "Math-Block")
+        xaxis = DataNode("x-axis","xaxis")
+        xpath = self.add_node(spath2, xaxis)
 
+        yaxis = DataNode("y-axis1", "yaxis")
+        self.add_node(xpath, yaxis)
         
 
+class PlotNode(gobject.GObject):
+
+    name = None
+    nodetype = "notebook"
+
+    def __init__(self, name):
+        gobject.GObject.__init__(self)
+        self.name = name
+
+    def getinfo(self):
+        return "PlotNode info not implemented yet"
 
 
+class SubplotNode(gobject.GObject):
+
+    name = None
+    nodetype = "singleplot"
+
+    def __init__(self, name):
+        gobject.GObject.__init__(self)
+        self.name = name
+
+    def getinfo(self):
+        return "SubplotNode info not implemented yet"
 
 
+class DataNode(gobject.GObject):
+
+    name = None
+    nodetype = ""
+    datasource = None
+    datapath = None
+    dataslicer = None
+    simpleoperator = None
+
+    def __init__(self, name, nodetype):
+        gobject.GObject.__init__(self)
+        self.name = name
+        self.nodetype = nodetype
+
+    def set_data(self, datasource, datapath, dataslicer=None):
+        print "DataNode::set_data TBD"
+
+    def getinfo(self):
+        return "DataNode info not implemented yet"
+    
