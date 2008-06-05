@@ -30,17 +30,16 @@ class GnucapPlugin(datasource.DataSource):
     The gnucap plugin loads a whitespace seperated datafile to
     a table. The first line are the column titles.
     """
-    name = "gnucap plugin"
+    name = "gnucap"
     filename = "None"
     table = {}   ## a dictionary to numpy arrays
     colnames = []
     
-    def __init__(self, filename, tree, parent):
+    def __init__(self, filename):
         datasource.DataSource.__init__(self)
         self.filename = filename
         self.testdatadict = {}
         self.loadfile()
-        self.load(tree, parent)
 
     def loadfile(self):
         lines = open(self.filename).readlines()
@@ -51,9 +50,9 @@ class GnucapPlugin(datasource.DataSource):
         for i, col in enumerate(self.colnames):
             self.table[col] = array[:,i]
         
-    def load(self, tree, parent):
+    def load(self):
         node = datasource.DataNode("gnucap-data", "table", ["table"], self)
-        tree.newnode(parent, (), node)
+        return [((), node)]
                 
     def getdata(self, path):
         print "Not implemented yet"

@@ -32,22 +32,23 @@ testdata = [[[], ["root"], "testroot", "folder", None],
             [[0,1], ["root","arrays","data3d"], "data3d", "array3d", numpy.random.rand(10,20,30)]]
 
 class TestPlugin(datasource.DataSource):
-    name = "testplugin"
+    name = "test"
     filename = "None"
     testdatadict = {}
     
-    def __init__(self, filename, tree, parent):
+    def __init__(self, filename):
         datasource.DataSource.__init__(self)
         self.filename = filename
-        self.load(tree,parent)
         
-    def load(self, tree, parent):
+    def load(self):
+        ret = []
         for dataset in testdata:
             localparent, path, name, nodetype, data = dataset
             node = datasource.DataNode(name, nodetype, path, self)
-            tree.newnode(parent, localparent, node)
+            ret.append((localparent, node))
             if data != None:
                 self.testdatadict[tuple(path)] = data
+        return ret
                 
     def getdata(self, path):
         if type(self.testdatadict[tuple(path)]) == numpy.ndarray:

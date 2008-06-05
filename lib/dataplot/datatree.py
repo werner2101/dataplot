@@ -86,12 +86,15 @@ class DataTree(gtk.TreeView):
         mm = self.get_model()
         ii = mm.append(None)
         parent = mm.get_path(ii)
-        datasource = self.plugins[plugin](filename, self, parent)
+        datasource = self.plugins[plugin](filename)
         mm.set(ii, 0, self.icons["file"], 1, name, 2, datasource)
 
-    def newnode(self, parent, localparent, node):
+        for (path, obj) in datasource.load():
+            self.new_node(parent + tuple(path), obj)
+
+    def new_node(self, parent, node):
         mm = self.get_model()
-        mm.set(mm.append(mm.get_iter(parent + tuple(localparent))),
+        mm.set(mm.append(mm.get_iter(parent)),
                0, self.icons[node.gettype()],
                1, node.getname(),
                2, node)
