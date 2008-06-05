@@ -126,9 +126,22 @@ class MainWindow(gtk.Window):
 
     def event_table_activated(self, widget, table):
         colnames = table.datasource.getcolumnnames(table.sourcepath)
+        sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
+        
         dialog = dataselection.DataSelection(self, colnames)
         retcode = dialog.run()
         print dialog.returns["x_column"], dialog.returns["y_columns"], retcode
+
+        nthplot = self.plotnotebook.get_current_page()
+        xname = dialog.returns["x_column"]
+        if xname:
+            xnode = plottree.DataNode(xname, "xaxis")
+            xnode.set_data(sourcename, table.sourcepath, xname)
+            xpath = self.plottree.add_node((nthplot,0), xnode)
+            for yname in dialog.returns["y_columns"]:
+                ynode = plottree.DataNode(yname, "yaxis")
+                ynode.set_data(sourcename, table.sourcepath, yname)
+                self.plottree.add_node(xpath, ynode)
 
     def event_new_plot(self, widget):
         self.new_plot("newplot")
@@ -154,6 +167,8 @@ class MainWindow(gtk.Window):
         self.infolog.get_buffer().set_text("hello infobox")
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
+
+        self.datatree.test()
 
         self.new_plot("plot2")
         

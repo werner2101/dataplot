@@ -155,8 +155,17 @@ class DataNode(gobject.GObject):
         self.nodetype = nodetype
 
     def set_data(self, datasource, datapath, dataslicer=None):
-        print "DataNode::set_data TBD"
+        self.datasource = datasource
+        self.datapath = datapath
+        self.dataslicer = dataslicer
 
     def getinfo(self):
-        return "DataNode info not implemented yet"
+        x = ["Name: " + str(self.name),
+             "Type: " + str(self.nodetype),
+             "Data Source: " + str(self.datasource),
+             "Data Path: " + str(self.datapath),
+             "Slicer: " + str(self.dataslicer),
+             "Operator: " + str(self.simpleoperator)]
+
+        return "\n".join(x)
     

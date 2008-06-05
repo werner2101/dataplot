@@ -57,7 +57,6 @@ class DataTree(gtk.TreeView):
 
         self.load_icons()
         self.load_plugins()
-        self.test()
 
         ## SETUP signals
         self.connect("cursor-changed", self.event_cursor_changed)
