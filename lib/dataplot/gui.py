@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-import gtk
+import gtk, gobject, gtk.gdk
 
 import plot, datatree, plottree, dataselection
 
@@ -47,13 +47,19 @@ class MainWindow(gtk.Window):
         scrollwin = gtk.ScrolledWindow()
         scrollwin.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.hpan2.add1(scrollwin)
-        self.datatree = datatree.DataTree()
+        self.datamodel = gtk.TreeStore(gtk.gdk.Pixbuf,
+                                       gobject.TYPE_STRING,
+                                       gobject.TYPE_OBJECT)
+        self.datatree = datatree.DataTree(self.datamodel)
         scrollwin.add_with_viewport(self.datatree)
 
         scrollwin = gtk.ScrolledWindow()
         scrollwin.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.hpan2.add2(scrollwin)
-        self.plottree = plottree.PlotTree()
+        self.plotmodel = gtk.TreeStore(gtk.gdk.Pixbuf,
+                                       gobject.TYPE_STRING,
+                                       gobject.TYPE_OBJECT)
+        self.plottree = plottree.PlotTree(self.plotmodel)
         scrollwin.add_with_viewport(self.plottree)
 
         self.plotnotebook = gtk.Notebook()
@@ -72,7 +78,7 @@ class MainWindow(gtk.Window):
         self.statusbar = gtk.Statusbar()
         self.vbox1.pack_start(self.statusbar, False)
 
-
+        ########## subsystem inits
         self.new_plot("plot1")
 
         #self.menubar =
@@ -128,16 +134,17 @@ class MainWindow(gtk.Window):
         self.new_plot("newplot")
 
     def new_plot(self, name):
+        self.plottree.add_plot(name)
+
         plot1 = plot.Plot()
         self.plotnotebook.append_page(plot1, gtk.Label(name))
         plot1.show()
-        self.plottree.add_plot(name)
-        
+        self.plotnotebook.set_current_page(-1)
 
     def event_delete_plot(self, name):
         nth = self.plotnotebook.get_current_page()
         self.plotnotebook.remove_page(nth)
-        self.plottree.remove_plot(nth)
+        self.plotmodel.remove(self.plotmodel.get_iter((nth,)))
         if self.plotnotebook.get_n_pages() == 0:
             self.new_plot("plot1")
 

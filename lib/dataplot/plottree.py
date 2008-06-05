@@ -37,7 +37,7 @@ class PlotTree(gtk.TreeView):
                        (gobject.TYPE_STRING, )),
                      }
     
-    def __init__(self):
+    def __init__(self, plotmodel):
         gtk.TreeView.__init__(self)
         column = gtk.TreeViewColumn(None, gtk.CellRendererPixbuf(), pixbuf=0)
         self.append_column(column)
@@ -47,9 +47,8 @@ class PlotTree(gtk.TreeView):
         self.set_property("headers-visible", False)
 
         self.load_icons()
-        self.create_model()
-        #self.test()
-
+        self.set_model(plotmodel)
+        
         ## SETUP signals
         self.connect("cursor-changed", self.event_cursor_changed)
         
@@ -58,10 +57,6 @@ class PlotTree(gtk.TreeView):
         self.icons = {}
         for name,filename in bitmaps:
             self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
-
-    def create_model(self):
-        model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_OBJECT)
-        self.set_model(model)
 
     def add_node(self, parentpath, nodeobject):
         m = self.get_model()
@@ -80,10 +75,6 @@ class PlotTree(gtk.TreeView):
         spath1 = self.add_node(path, subplot)
         return spath1
 
-    def remove_plot(self, nth):
-        m = self.get_model()
-        i = m.get_iter((nth,))
-        m.remove(i)
 
     def event_cursor_changed(self, treeview):
         """

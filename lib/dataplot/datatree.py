@@ -45,7 +45,7 @@ class DataTree(gtk.TreeView):
     
     
 
-    def __init__(self):
+    def __init__(self, datamodel):
         gtk.TreeView.__init__(self)
         column = gtk.TreeViewColumn(None, gtk.CellRendererPixbuf(), pixbuf=0)
         self.append_column(column)
@@ -53,10 +53,10 @@ class DataTree(gtk.TreeView):
         self.append_column(column)
         self.set_property("enable-tree-lines", True)
         self.set_property("headers-visible", False)
+        self.set_model(datamodel)
 
         self.load_icons()
         self.load_plugins()
-        self.create_model()
         self.test()
 
         ## SETUP signals
@@ -73,9 +73,6 @@ class DataTree(gtk.TreeView):
         self.plugins["test"] = testplugin.TestPlugin
         self.plugins["gnucap"] = gnucapplugin.GnucapPlugin
 
-    def create_model(self):
-        model = gtk.TreeStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_OBJECT)
-        self.set_model(model)
 
     def test(self):
         self.load_file("abc filename", "abc", "test")
