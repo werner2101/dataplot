@@ -57,27 +57,16 @@ class DataSelection(gtk.Dialog):
         self.vbox.add(scrollwin)
         self.show_all()
         
-        
-        #################### Signals
-        self.connect("response", self.event_response)
-        self.connect("destroy", self.event_destroy)
 
-        
-    def event_destroy(self, widget):
-        self.destroy()
-    
-
-    def event_response(self, widget, response_id):
-        if response_id == gtk.RESPONSE_ACCEPT:
-            x,y = None, []
-            for row in self.listview.get_model():
-                if row[0] == True:
-                    x = row[2]
-                if row[1] == True:
-                    y.append(row[2])
-            self.returns["x_column"] = x
-            self.returns["y_columns"] = y
-        self.destroy()
+    def get_content(self):
+        x,y = None, []
+        for row in self.listview.get_model():
+            if row[0] == True:
+                x = row[2]
+            if row[1] == True:
+                y.append(row[2])
+        return {"x_column": x,
+                "y_columns": y}
             
         
     def x_toggle(self, cell, path, listview):
