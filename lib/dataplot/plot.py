@@ -27,11 +27,26 @@ import matplotlib.backends.backend_gtk
 
 class Plot(matplotlib.backends.backend_gtk.FigureCanvasGTK):
 
-    figure = None
+    subplots = {}
+    subplot = None
 
     def __init__(self):
         self.figure = matplotlib.figure.Figure()
         matplotlib.backends.backend_gtk.FigureCanvasGTK.__init__(self,self.figure)
-        self.figure.add_subplot(111)
+        self.subplots[0] = self.figure.add_subplot(111)
 
+
+    def plot_vector(self, x, y, label=None):
+        if x == None:
+            self.subplot.plot(y, label=label)
+        else:
+            self.subplot.plot(x, y, label=label)
+
+    def set_subplot(self, n):
+        self.subplot = self.subplots[n]
+
+    def test(self):
+        x = numpy.linspace(-10,10,1000)
+        p = self.subplots[0]
+        p.plot(x, numpy.sin(x), label="sin(x)")
 

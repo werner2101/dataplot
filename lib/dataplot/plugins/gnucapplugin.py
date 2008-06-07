@@ -31,12 +31,11 @@ class GnucapPlugin(datasource.DataSource):
     a table. The first line are the column titles.
     """
     name = "gnucap"
-    filename = "None"
-    table = {}   ## a dictionary to numpy arrays
-    colnames = []
     
     def __init__(self, filename):
         datasource.DataSource.__init__(self)
+        self.table = {}   ## a dictionary to numpy arrays
+        self.colnames = []
         self.filename = filename
         self.testdatadict = {}
         self.loadfile()
@@ -54,9 +53,8 @@ class GnucapPlugin(datasource.DataSource):
         node = datasource.DataNode("gnucap-data", "table", ["table"], self)
         return [((), node)]
                 
-    def getdata(self, path):
-        print "Not implemented yet"
-        return None
+    def get_data(self, path, slicer):
+        return self.table[slicer]
 
     def getcolumnnames(self, path):
         return self.colnames

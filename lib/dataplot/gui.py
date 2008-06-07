@@ -22,6 +22,7 @@ import gtk, gobject, gtk.gdk
 
 import plot, datatree, plottree, dataselection
 
+
 class MainWindow(gtk.Window):
 
     def __init__(self, args=None):
@@ -127,10 +128,11 @@ class MainWindow(gtk.Window):
     def event_table_activated(self, widget, table):
         colnames = table.datasource.getcolumnnames(table.sourcepath)
         sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
+        source = self.datamodel[widget.get_cursor()[0][0:1]][2]
         
         dialog = dataselection.DataSelection(self, colnames)
         retcode = dialog.run()
-        print "retcode: ", retcode
+
         if retcode == gtk.RESPONSE_ACCEPT:
             data = dialog.get_content()
     
@@ -138,26 +140,43 @@ class MainWindow(gtk.Window):
             xname = data["x_column"]
             if xname:
                 xnode = plottree.DataNode(xname, "xaxis")
-                xnode.set_data(sourcename, table.sourcepath, xname)
+                xnode.set_data(source, sourcename, table.sourcepath, xname)
                 xpath = self.plottree.add_node((nthplot,0), xnode)
                 for yname in data["y_columns"]:
                     ynode = plottree.DataNode(yname, "yaxis")
-                    ynode.set_data(sourcename, table.sourcepath, yname)
+                    ynode.set_data(source, sourcename, table.sourcepath, yname)
                     self.plottree.add_node(xpath, ynode)
 
         dialog.destroy()
+
+        self.replot()
 
 
     def event_new_plot(self, widget):
         self.new_plot("newplot")
 
     def new_plot(self, name):
-        self.plottree.add_plot(name)
-
         plot1 = plot.Plot()
+        self.plottree.add_plot(name, plot1)
         self.plotnotebook.append_page(plot1, gtk.Label(name))
         plot1.show()
         self.plotnotebook.set_current_page(-1)
+
+    def replot(self):
+        nth = self.plotnotebook.get_current_page()
+        plotiter = self.plotmodel.get_iter((nth))
+        plot = self.plotmodel.get_value(plotiter,2).plot
+        plot.set_subplot(0)
+        subplotiter = self.plotmodel.get_iter((nth,0))
+        for x in xrange(self.plotmodel.iter_n_children(subplotiter)):
+            xiter = self.plotmodel.iter_nth_child(subplotiter,x)
+            xdata = self.plotmodel.get_value(xiter,2)
+            for y in xrange(self.plotmodel.iter_n_children(xiter)):
+                yiter = self.plotmodel.iter_nth_child(xiter, y)
+                ydata = self.plotmodel.get_value(yiter,2)
+                yname = self.plotmodel.get_value(yiter,1)
+                plot.plot_vector(xdata.get_vector(), ydata.get_vector(), label= yname)
+                
 
     def event_delete_plot(self, name):
         nth = self.plotnotebook.get_current_page()
@@ -173,10 +192,15 @@ class MainWindow(gtk.Window):
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
 
-        self.datatree.test()
+        self.datatree.load_file("abc filename", "abc", "test")
+        self.datatree.load_file("lib/dataplot/plugins/testdata/dc_current_gain_t0.data",
+                                "dc_current_gain_t0.data", "gnucap")
+        self.datatree.load_file("lib/dataplot/plugins/testdata/saturation_voltages_t0.data",
+                                "saturation_voltages_t0.data", "gnucap")
 
         self.new_plot("plot2")
         
     
 
-
+    
+    

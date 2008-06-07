@@ -23,8 +23,15 @@ import numpy
 
 import datasource
 
+
+a = numpy.random.rand(30,10)
+
+table1 = dict([("test" + str(i), a[:,i]) for i in xrange(a.shape[1])])
+table2 = dict([("test" + str(i), a[i,:]) for i in xrange(a.shape[0])])
+
 testdata = [[[], ["root"], "testroot", "folder", None],
-            [[0], ["root","table"], "testtable", "table", None],
+            [[0], ["root","table1"], "testtable1", "table", table1],
+            [[0], ["root","table2"], "testtable2", "table", table2],
             [[0], ["root","arrays"], "arrays", "folder", None],
             [[0,1], ["root","arrays","data1d1"], "data1d1", "array1d", numpy.arange(100)],
             [[0,1], ["root","arrays","data1d2"], "data1d2", "array1d", numpy.random.rand(100)],
@@ -33,12 +40,12 @@ testdata = [[[], ["root"], "testroot", "folder", None],
 
 class TestPlugin(datasource.DataSource):
     name = "test"
-    filename = "None"
-    testdatadict = {}
     
     def __init__(self, filename):
         datasource.DataSource.__init__(self)
         self.filename = filename
+        self.testdatadict = {}
+        self.testtabledict = {}
         
     def load(self):
         ret = []
@@ -46,22 +53,24 @@ class TestPlugin(datasource.DataSource):
             localparent, path, name, nodetype, data = dataset
             node = datasource.DataNode(name, nodetype, path, self)
             ret.append((localparent, node))
-            if data != None:
+            if nodetype[:5] == "array":
                 self.testdatadict[tuple(path)] = data
+            elif nodetype == "table":
+                self.testtabledict[tuple(path)] = data
         return ret
                 
-    def getdata(self, path):
-        if type(self.testdatadict[tuple(path)]) == numpy.ndarray:
+    def get_data(self, path, slicer):
+        if self.testdatadict.has_key(tuple(path)):
             return self.testdatadict[tuple(path)]
         else:
-            print "Not implemented yet"
+            return self.testtabledict[tuple(path)][slicer]
 
     def getinfo(self):
         return "Sourcename: " + self.name \
                + "\nFilename: " + self.filename
         
     def getcolumnnames(self, path=None):
-        return ["Col1", "Col2"]
+        return self.testtabledict[tuple(path)].keys()
 
     def gettableinfo(self, path):
-        return "Colnames: " + " ".join(self.getcolumnnames([])) + "\n Rows: 20"
+        return "Colnames: " + " ".join(self.getcolumnnames(path)) + "\n"

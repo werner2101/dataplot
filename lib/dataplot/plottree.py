@@ -68,8 +68,8 @@ class PlotTree(gtk.TreeView):
         m.set(i_new, 0, self.icons[nodeobject.nodetype], 1, nodeobject.name, 2, nodeobject)
         return m.get_path(i_new)
 
-    def add_plot(self, name, subplotname="subplot"):
-        plot = PlotNode(name)
+    def add_plot(self, name, plot,subplotname="subplot"):
+        plot = PlotNode(name, plot)
         path = self.add_node(None, plot)
         subplot = SubplotNode("subplot")
         spath1 = self.add_node(path, subplot)
@@ -118,13 +118,16 @@ class PlotNode(gobject.GObject):
 
     name = None
     nodetype = "notebook"
+    plot = None
 
-    def __init__(self, name):
+    def __init__(self, name, plot):
         gobject.GObject.__init__(self)
         self.name = name
+        self.plot = plot
 
     def getinfo(self):
         return "PlotNode info not implemented yet"
+
 
 
 class SubplotNode(gobject.GObject):
@@ -145,6 +148,7 @@ class DataNode(gobject.GObject):
     name = None
     nodetype = ""
     datasource = None
+    sourcename = None
     datapath = None
     dataslicer = None
     simpleoperator = None
@@ -154,15 +158,22 @@ class DataNode(gobject.GObject):
         self.name = name
         self.nodetype = nodetype
 
-    def set_data(self, datasource, datapath, dataslicer=None):
+    def set_data(self, datasource, sourcename, datapath, dataslicer=None):
         self.datasource = datasource
+        self.sourcename = sourcename
         self.datapath = datapath
         self.dataslicer = dataslicer
+
+    def get_vector(self):
+        data = self.datasource.get_data(self.datapath, self.dataslicer)
+
+        return data
+        
 
     def getinfo(self):
         x = ["Name: " + str(self.name),
              "Type: " + str(self.nodetype),
-             "Data Source: " + str(self.datasource),
+             "Data Source: " + str(self.sourcename),
              "Data Path: " + str(self.datapath),
              "Slicer: " + str(self.dataslicer),
              "Operator: " + str(self.simpleoperator)]

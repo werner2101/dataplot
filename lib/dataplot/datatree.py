@@ -73,14 +73,6 @@ class DataTree(gtk.TreeView):
         self.plugins["gnucap"] = gnucapplugin.GnucapPlugin
 
 
-    def test(self):
-        self.load_file("abc filename", "abc", "test")
-        self.load_file("lib/dataplot/plugins/testdata/dc_current_gain_t0.data",
-                       "dc_current_gain_t0.data", "gnucap")
-        self.load_file("lib/dataplot/plugins/testdata/saturation_voltages_t0.data",
-                       "saturation_voltages_t0.data", "gnucap")
-
-
     def load_file(self, filename, name, plugin):
         mm = self.get_model()
         ii = mm.append(None)
