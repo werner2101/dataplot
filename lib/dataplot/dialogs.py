@@ -20,7 +20,73 @@
 import gtk, gobject
 
 
-class singleplot_options(gtk.Dialog):
+class TableDataSelection(gtk.Dialog):
+
+    returns = {}
+
+    def __init__(self, parent, columnnames):
+        gtk.Dialog.__init__(self, "Row Selection", parent,
+                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                            (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                             gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+
+        scrollwin = gtk.ScrolledWindow()
+        scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scrollwin.set_size_request(-1, 200)
+        
+        self.listview = gtk.TreeView()
+        x_cell = gtk.CellRendererToggle()
+        x_cell.set_property("radio", True)
+        x_cell.set_property("activatable", True)
+        x_cell.connect('toggled', self.x_toggle, self.listview)
+                      
+        y_cell = gtk.CellRendererToggle()
+        y_cell.set_property("activatable", True)
+        y_cell.connect('toggled', self.y_toggle, self.listview)
+
+        self.listview.append_column(gtk.TreeViewColumn("X", x_cell , active=0))
+        self.listview.append_column(gtk.TreeViewColumn("Y", y_cell , active=1))
+        self.listview.append_column(gtk.TreeViewColumn("Name", gtk.CellRendererText(), text=2))
+
+        liststore = gtk.ListStore( gobject.TYPE_BOOLEAN, gobject.TYPE_BOOLEAN, str)
+        for name in columnnames:
+            liststore.append([False, False, name])
+        self.listview.set_model(liststore)
+        
+        scrollwin.add_with_viewport(self.listview)
+        self.vbox.add(scrollwin)
+        self.show_all()
+        
+
+    def get_content(self):
+        x,y = None, []
+        for row in self.listview.get_model():
+            if row[0] == True:
+                x = row[2]
+            if row[1] == True:
+                y.append(row[2])
+        return {"x_column": x,
+                "y_columns": y}
+            
+        
+    def x_toggle(self, cell, path, listview):
+        """
+        Callback when the toggle buttons of the X-row is toggled.
+        Only allow one x-value to be selected from the x-row
+        """
+        mm = listview.get_model()
+        newstate = not mm[path][0]
+        for row in mm:
+            row[0] = False
+        mm[path][0] = newstate
+        
+    
+    def y_toggle(self, cell, path, listview):
+        mm = listview.get_model()
+        mm[path][1] = not mm[path][1]
+
+
+class SingleplotOptions(gtk.Dialog):
 
     returns = {}
 

@@ -20,7 +20,7 @@
 
 import gtk, gobject, gtk.gdk
 
-import datatree, plottree, dataselection, dialogs
+import datatree, plottree, dialogs
 
 
 class MainWindow(gtk.Window):
@@ -131,7 +131,7 @@ class MainWindow(gtk.Window):
         sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
         source = self.datamodel[widget.get_cursor()[0][0:1]][2]
         
-        dialog = dataselection.DataSelection(self, colnames)
+        dialog = dialogs.TableDataSelection(self, colnames)
         retcode = dialog.run()
 
         if retcode == gtk.RESPONSE_ACCEPT:
@@ -158,7 +158,7 @@ class MainWindow(gtk.Window):
         if node.nodetype == "notebook":
             print "TODO: row activation for notebook"
         elif node.nodetype == "singleplot":
-            dialog = dialogs.singleplot_options(self, node.get_properties())
+            dialog = dialogs.SingleplotOptions(self, node.get_properties())
             ret = dialog.run()
             if ret == gtk.RESPONSE_ACCEPT:
                 node.set_properties(dialog.get_content())
