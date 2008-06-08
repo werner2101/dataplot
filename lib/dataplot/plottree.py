@@ -154,17 +154,46 @@ class SubplotNode(gobject.GObject):
         self.name = name
         self.figure = figure
         self.axes = figure.add_subplot(plot)
-        self.properties = {}
+        self.properties = {'xmin': None,
+                           'xmax': None,
+                           'ymin': None,
+                           'ymax': None,
+                           'ylog': False,
+                           'xlog': False,
+                           'xlabel': "",
+                           'ylabel': "",
+                           'title': "",
+                           'grid': True,
+                           'legend': False}
 
-        self.axes.grid(True)
-        #self.axes.legend(loc="best")
-        
+
     def getinfo(self):
         return "Subplot: " + self.name
 
     def set_properties(self, properties):
         self.properties = properties
+        self.update()
 
+    def update(self):
+        if self.properties["xlog"]:
+            self.axes.set_xscale('log')
+        else:
+            self.axes.set_xscale('linear')
+
+        if self.properties["ylog"]:
+            self.axes.set_yscale('log')
+        else:
+            self.axes.set_yscale('linear')
+
+        self.axes.set_xlabel(self.properties['xlabel'])
+        self.axes.set_ylabel(self.properties['ylabel'])
+        self.axes.set_title(self.properties['title'])
+
+        self.axes.grid(self.properties['grid'])
+
+        if self.properties['legend']:
+            self.axes.legend(loc='best')
+                             
         self.axes.axis('auto')
         if (self.properties["xmin"]):
             self.axes.axis(xmin=self.properties["xmin"])

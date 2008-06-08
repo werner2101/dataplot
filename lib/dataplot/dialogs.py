@@ -102,6 +102,53 @@ class SingleplotOptions(gtk.Dialog):
 
     def create_dialog(self, prop):
 
+        ## Grid, legend and x/y settings
+        label = gtk.Label()
+        label.set_markup("<b>Misc Settings</b>")
+        label.set_justify(gtk.JUSTIFY_LEFT)
+        label.set_use_markup(True)
+        self.vbox.pack_start(label, False, True)
+
+        align = gtk.Alignment()
+        align.set_padding(0, 0, 10, 0)
+        self.vbox.add(align)
+
+        avbox = gtk.VBox()
+        align.add(avbox)
+
+        table = gtk.Table(3, 2)
+        avbox.add(table)
+
+        table.attach(gtk.Label("title: "), 0, 1, 0, 1)
+        self.title_entry = gtk.Entry()
+        self.title_entry.set_text(prop.get("title",""))
+        table.attach(self.title_entry, 1, 2, 0, 1)
+        table.attach(gtk.Label("x-label: "), 0, 1, 1, 2)
+        self.xlabel_entry = gtk.Entry()
+        self.xlabel_entry.set_text(prop.get("xlabel",""))
+        table.attach(self.xlabel_entry, 1, 2, 1, 2)
+        table.attach(gtk.Label("y-label: "), 0, 1, 2, 3)
+        self.ylabel_entry = gtk.Entry()
+        self.ylabel_entry.set_text(prop.get("ylabel",""))
+        table.attach(self.ylabel_entry, 1, 2, 2, 3)
+
+        self.grid_check = gtk.CheckButton("Enable Grid")
+        self.grid_check.set_active(prop.get("grid", True))
+        avbox.add(self.grid_check)
+
+        self.legend_check = gtk.CheckButton("Enable Legend")
+        self.legend_check.set_active(prop.get("legend", True))
+        avbox.add(self.legend_check)
+
+        hbox = gtk.HBox()
+        avbox.add(hbox)
+        self.xlog_check = gtk.CheckButton("Logarithmic x-axis")
+        self.xlog_check.set_active(prop.get("xlog", False))
+        hbox.add(self.xlog_check)
+        self.ylog_check = gtk.CheckButton("Logarithmic y-axis")
+        self.ylog_check.set_active(prop.get("ylog", False))
+        hbox.add(self.ylog_check)
+
         ## Axis Settings
         label = gtk.Label()
         label.set_markup("<b>Axis Ranges:</b>")
@@ -169,6 +216,15 @@ class SingleplotOptions(gtk.Dialog):
                 "xmax": None,
                 "ymin": None,
                 "ymax": None}
+
+        prop["grid"] = self.grid_check.get_active()
+        prop["legend"] = self.legend_check.get_active()
+        prop["xlog"] = self.xlog_check.get_active()
+        prop["ylog"] = self.ylog_check.get_active()
+        
+        prop["title"] = self.title_entry.get_text()
+        prop["xlabel"] = self.xlabel_entry.get_text()
+        prop["ylabel"] = self.ylabel_entry.get_text()
         
         if (self.xmin_check.get_active()):
             prop["xmin"] = float(self.xmin_entry.get_text())

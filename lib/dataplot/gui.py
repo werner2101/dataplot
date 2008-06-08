@@ -149,8 +149,7 @@ class MainWindow(gtk.Window):
                     ypath = self.plottree.add_node(xpath, ynode)
                     self.plottree.add_line(ypath)
 
-            plot = self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,)),2)
-            plot.replot()
+            self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
         dialog.destroy()
         
 
