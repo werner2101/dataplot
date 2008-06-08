@@ -37,6 +37,10 @@ class PlotTree(gtk.TreeView):
                      ( gobject.SIGNAL_NO_RECURSE,
                        gobject.TYPE_NONE,
                        (gobject.TYPE_STRING, )),
+                     'plotnode-activated':
+                     ( gobject.SIGNAL_NO_RECURSE,
+                       gobject.TYPE_NONE,
+                       (gobject.TYPE_OBJECT,))
                      }
     
     def __init__(self, plotmodel):
@@ -53,6 +57,7 @@ class PlotTree(gtk.TreeView):
         
         ## SETUP signals
         self.connect("cursor-changed", self.event_cursor_changed)
+        self.connect("row-activated", self.event_row_activated)
         
 
     def load_icons(self):
@@ -87,6 +92,11 @@ class PlotTree(gtk.TreeView):
         m = self.get_model()
         path = self.get_cursor()[0]
         self.emit('info-message', m[path][2].getinfo())
+
+    def event_row_activated(self, treeview, path, column):
+        
+        node = treeview.get_model()[path][2]
+        self.emit('plotnode-activated', node)
 
 
     def test(self):
@@ -144,12 +154,37 @@ class SubplotNode(gobject.GObject):
         self.name = name
         self.figure = figure
         self.axes = figure.add_subplot(plot)
+        self.properties = {}
 
         self.axes.grid(True)
         #self.axes.legend(loc="best")
         
     def getinfo(self):
         return "Subplot: " + self.name
+
+    def set_properties(self, properties):
+        self.properties = properties
+
+        self.axes.axis('auto')
+        if (self.properties["xmin"]):
+            self.axes.axis(xmin=self.properties["xmin"])
+        if (self.properties["xmax"]):
+            self.axes.axis(xmax=self.properties["xmax"])
+        if (self.properties["ymin"]):
+            self.axes.axis(ymin=self.properties["ymin"])
+        if (self.properties["ymax"]):
+            self.axes.axis(ymax=self.properties["ymax"])
+
+        self.figure.canvas.draw()
+
+    def get_properties(self):
+        [xmin, xmax, ymin, ymax] = self.axes.axis()
+        self.properties["xmin"] = xmin
+        self.properties["xmax"] = xmax
+        self.properties["ymin"] = ymin
+        self.properties["ymax"] = ymax
+        return self.properties
+        
 
 
 class DataNode(gobject.GObject):

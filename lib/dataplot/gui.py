@@ -20,7 +20,7 @@
 
 import gtk, gobject, gtk.gdk
 
-import datatree, plottree, dataselection
+import datatree, plottree, dataselection, dialogs
 
 
 class MainWindow(gtk.Window):
@@ -88,6 +88,7 @@ class MainWindow(gtk.Window):
         self.connect("delete_event", self.event_delete)
         self.datatree.connect("info-message", self.event_info_message)
         self.datatree.connect("table-activated", self.event_table_activated)
+        self.plottree.connect("plotnode-activated", self.event_plotnode_acitvated)
         self.plottree.connect("info-message", self.event_info_message)
 
 
@@ -152,7 +153,23 @@ class MainWindow(gtk.Window):
             plot.replot()
         dialog.destroy()
         
-        
+
+    def event_plotnode_acitvated(self, widget, node):
+        if node.nodetype == "notebook":
+            print "TODO: row activation for notebook"
+        elif node.nodetype == "singleplot":
+            dialog = dialogs.singleplot_options(self, node.get_properties())
+            ret = dialog.run()
+            if ret == gtk.RESPONSE_ACCEPT:
+                node.set_properties(dialog.get_content())
+            dialog.destroy()
+                
+        elif node.nodetype == "yaxis":
+            print "TOD0: row activation for yaxis"
+        elif node.nodetype == "xaxis":
+            print "TOD0: row activation for xaxis"
+        else:
+            print "UPS: unknown node type in plottree"
 
 
     def event_new_plot(self, widget):
