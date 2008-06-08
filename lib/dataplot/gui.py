@@ -20,7 +20,7 @@
 
 import gtk, gobject, gtk.gdk
 
-import plot, datatree, plottree, dataselection
+import datatree, plottree, dataselection
 
 
 class MainWindow(gtk.Window):
@@ -145,38 +145,28 @@ class MainWindow(gtk.Window):
                 for yname in data["y_columns"]:
                     ynode = plottree.DataNode(yname, "yaxis")
                     ynode.set_data(source, sourcename, table.sourcepath, yname)
-                    self.plottree.add_node(xpath, ynode)
+                    ypath = self.plottree.add_node(xpath, ynode)
+                    self.plottree.add_line(ypath)
 
+            plot = self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,)),2)
+            plot.replot()
         dialog.destroy()
-
-        self.replot()
+        
+        
 
 
     def event_new_plot(self, widget):
         self.new_plot("newplot")
 
     def new_plot(self, name):
-        plot1 = plot.Plot()
-        self.plottree.add_plot(name, plot1)
-        self.plotnotebook.append_page(plot1, gtk.Label(name))
-        plot1.show()
+        plot = plottree.PlotNode(name)
+        path = self.plottree.add_node(None, plot)
+        subplot = plottree.SubplotNode(name, plot.figure)
+        path = self.plottree.add_node(path, subplot)
+        self.plotnotebook.append_page(plot.plot, gtk.Label(name))
+        plot.plot.show()
         self.plotnotebook.set_current_page(-1)
 
-    def replot(self):
-        nth = self.plotnotebook.get_current_page()
-        plotiter = self.plotmodel.get_iter((nth))
-        plot = self.plotmodel.get_value(plotiter,2).plot
-        plot.set_subplot(0)
-        subplotiter = self.plotmodel.get_iter((nth,0))
-        for x in xrange(self.plotmodel.iter_n_children(subplotiter)):
-            xiter = self.plotmodel.iter_nth_child(subplotiter,x)
-            xdata = self.plotmodel.get_value(xiter,2)
-            for y in xrange(self.plotmodel.iter_n_children(xiter)):
-                yiter = self.plotmodel.iter_nth_child(xiter, y)
-                ydata = self.plotmodel.get_value(yiter,2)
-                yname = self.plotmodel.get_value(yiter,1)
-                plot.plot_vector(xdata.get_vector(), ydata.get_vector(), label= yname)
-                
 
     def event_delete_plot(self, name):
         nth = self.plotnotebook.get_current_page()
