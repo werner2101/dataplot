@@ -27,12 +27,15 @@ class MainWindow(gtk.Window):
 
     def __init__(self, args=None):
         gtk.Window.__init__(self)
-        self.set_default_size(600,400)
+        self.set_default_size(800,600)
 
         self.vbox1 = gtk.VBox()
         self.add(self.vbox1)
 
+        self.accel_group = gtk.AccelGroup()
+        self.init_menubar()
         self.init_toolbar()
+        self.add_accel_group(self.accel_group)
 
         self.vpan1 = gtk.VPaned()
         self.vpan1.set_position(250)
@@ -96,6 +99,66 @@ class MainWindow(gtk.Window):
         self.test()
 
 
+    def init_menubar(self):
+        """
+        create a menubar with menu items
+        """
+
+        menubar = gtk.MenuBar()
+        self.vbox1.pack_start(menubar, False, False, 0)
+        
+        menu_file = gtk.Menu()
+        menu_data = gtk.Menu()
+        menu_plot = gtk.Menu()
+        menu_help = gtk.Menu()
+        
+        menuitem_file = gtk.MenuItem('_File')
+        menuitem_file.set_submenu(menu_file)
+        menuitem_data = gtk.MenuItem('_Data')
+        menuitem_data.set_submenu(menu_data)
+        menuitem_plot = gtk.MenuItem('_Plot')
+        menuitem_plot.set_submenu(menu_plot)
+        menuitem_help = gtk.MenuItem('_Help')
+        menuitem_help.set_submenu(menu_help)
+
+        ## File menu entries
+        menuitem_file_new = gtk.ImageMenuItem(gtk.STOCK_NEW, self.accel_group)
+        menuitem_file_new.connect('activate', self.event_file_new)
+        menu_file.append(menuitem_file_new)
+        
+        menuitem_file_open = gtk.ImageMenuItem(gtk.STOCK_OPEN, self.accel_group)
+        menuitem_file_open.connect('activate', self.event_file_open)
+        menu_file.append(menuitem_file_open)
+        
+        menuitem_file_save = gtk.ImageMenuItem(gtk.STOCK_SAVE, self.accel_group)
+        menuitem_file_save.connect('activate', self.event_file_save)
+        menu_file.append(menuitem_file_save)
+                         
+        menuitem_file_saveas = gtk.ImageMenuItem(gtk.STOCK_SAVE_AS, self.accel_group)
+        menuitem_file_saveas.connect('activate', self.event_file_saveas)
+        menu_file.append(menuitem_file_saveas)
+
+        sep = gtk.SeparatorMenuItem()
+        sep.set_sensitive(False)
+        menu_file.append(sep)
+        
+        menuitem_file_quit = gtk.ImageMenuItem(gtk.STOCK_QUIT, self.accel_group)
+        menuitem_file_quit.connect('activate', self.event_file_quit)
+        menu_file.append(menuitem_file_quit)
+
+        menubar.append(menuitem_file)
+
+        ## Data menu entries
+        menubar.append(menuitem_data)
+
+        ## Plot menu entries
+        menubar.append(menuitem_plot)
+
+        ## Help menu entries
+        menubar.append(menuitem_help)
+        
+        
+
     def init_toolbar(self):
         """
         Load all toolbar icons and add them to the main window
@@ -117,10 +180,25 @@ class MainWindow(gtk.Window):
 
         
 
+    def event_file_new(self, menuitem):
+        print "event_file_new not implemented yet"
+
+    def event_file_open(self, menuitem):
+        print "event_file_open not implemented yet"
+
+    def event_file_save(self, menuitem):
+        print "event_file_save not implemented yet"
+
+    def event_file_saveas(self, menuitem):
+        print "event_file_saveas not implemented yet"
+
+    def event_file_quit(self, menuitem):
+        self.handle_quit()
+
     def event_delete(self, window, event):
         self.handle_quit()
 
-    def handle_quit (self):
+    def handle_quit(self):
         ## TODO: save plot project ??
         gtk.main_quit()
 
