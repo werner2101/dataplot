@@ -193,6 +193,9 @@ class SubplotNode(gobject.GObject):
 
         if self.properties['legend']:
             self.axes.legend(loc='best')
+        else:
+            l = self.axes.legend(())
+            l.draw_frame(False)
                              
         self.axes.axis('auto')
         if (self.properties["xmin"]):

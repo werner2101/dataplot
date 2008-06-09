@@ -86,6 +86,7 @@ class MainWindow(gtk.Window):
 
         ########## signals
         self.connect("delete_event", self.event_delete)
+        self.plotnotebook.connect("switch-page", self.event_notebook_changed)
         self.datatree.connect("info-message", self.event_info_message)
         self.datatree.connect("table-activated", self.event_table_activated)
         self.plottree.connect("plotnode-activated", self.event_plotnode_acitvated)
@@ -126,6 +127,10 @@ class MainWindow(gtk.Window):
     def event_info_message(self, widget, infotext):
         self.infolog.get_buffer().set_text(infotext)
 
+    def event_notebook_changed(self, notebook, page, page_num):
+        self.plottree.collapse_all()
+        self.plottree.expand_row((page_num,), True)
+
     def event_table_activated(self, widget, table):
         colnames = table.datasource.getcolumnnames(table.sourcepath)
         sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
@@ -149,6 +154,7 @@ class MainWindow(gtk.Window):
                     ypath = self.plottree.add_node(xpath, ynode)
                     self.plottree.add_line(ypath)
 
+            self.plottree.expand_row((nthplot,), True)
             self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
         dialog.destroy()
         
