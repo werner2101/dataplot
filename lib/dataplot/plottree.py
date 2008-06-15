@@ -81,8 +81,13 @@ class PlotTree(gtk.TreeView):
         xnode = m.get_value(m.get_iter(ypath[0:3]),2)
         subplotnode = m.get_value(m.get_iter(ypath[0:2]),2)
 
+        yv = ynode.get_vector()
+        xv = xnode.get_vector()
+        if xv == None:
+            xv = numpy.arange(len(yv))
+
         axes = subplotnode.axes
-        ynode.line = axes.plot(xnode.get_vector(), ynode.get_vector(), label=ynode.name)
+        ynode.line = axes.plot(xv, yv, label=ynode.name)
 
     def event_cursor_changed(self, treeview):
         """
@@ -221,19 +226,15 @@ class SubplotNode(gobject.GObject):
 
 class DataNode(gobject.GObject):
 
-    name = None
-    nodetype = ""
-    datasource = None
-    sourcename = None
-    datapath = None
-    dataslicer = None
-    simpleoperator = None
-
-
     def __init__(self, name, nodetype):
         gobject.GObject.__init__(self)
         self.name = name
         self.nodetype = nodetype
+        self.datasource = None
+        self.sourcename = None
+        self.datapath = None
+        self.dataslicer = None
+        self.simpleoperator = None
 
     def set_data(self, datasource, sourcename, datapath, dataslicer=None):
         self.datasource = datasource
@@ -242,9 +243,10 @@ class DataNode(gobject.GObject):
         self.dataslicer = dataslicer
 
     def get_vector(self):
-        data = self.datasource.get_data(self.datapath, self.dataslicer)
-        return data
-        
+        if not self.datasource:
+            return None
+        else:
+            return self.datasource.get_data(self.datapath, self.dataslicer)
 
     def getinfo(self):
         x = ["Name: " + str(self.name),

@@ -225,12 +225,15 @@ class MainWindow(gtk.Window):
             if xname:
                 xnode = plottree.DataNode(xname, "xaxis")
                 xnode.set_data(source, sourcename, table.sourcepath, xname)
-                xpath = self.plottree.add_node((nthplot,0), xnode)
-                for yname in data["y_columns"]:
-                    ynode = plottree.DataNode(yname, "yaxis")
-                    ynode.set_data(source, sourcename, table.sourcepath, yname)
-                    ypath = self.plottree.add_node(xpath, ynode)
-                    self.plottree.add_line(ypath)
+            else:
+                xnode = plottree.DataNode('generic', "xaxis")
+            xpath = self.plottree.add_node((nthplot,0), xnode)
+
+            for yname in data["y_columns"]:
+                ynode = plottree.DataNode(yname, "yaxis")
+                ynode.set_data(source, sourcename, table.sourcepath, yname)
+                ypath = self.plottree.add_node(xpath, ynode)
+                self.plottree.add_line(ypath)
 
             self.plottree.expand_row((nthplot,), True)
             self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
