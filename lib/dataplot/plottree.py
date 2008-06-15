@@ -246,7 +246,12 @@ class DataNode(gobject.GObject):
         if not self.datasource:
             return None
         else:
-            return self.datasource.get_data(self.datapath, self.dataslicer)
+            data = self.datasource.get_data(self.datapath, self.dataslicer)
+
+        if len(data.shape) > 1:
+            return eval('data'+self.dataslicer)
+        else:
+            return data
 
     def getinfo(self):
         x = ["Name: " + str(self.name),

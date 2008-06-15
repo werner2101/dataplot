@@ -92,6 +92,7 @@ class MainWindow(gtk.Window):
         self.plotnotebook.connect("switch-page", self.event_notebook_changed)
         self.datatree.connect("info-message", self.event_info_message)
         self.datatree.connect("table-activated", self.event_table_activated)
+        self.datatree.connect("array-activated", self.event_array_activated)
         self.plottree.connect("plotnode-activated", self.event_plotnode_acitvated)
         self.plottree.connect("info-message", self.event_info_message)
 
@@ -237,6 +238,36 @@ class MainWindow(gtk.Window):
 
             self.plottree.expand_row((nthplot,), True)
             self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
+        dialog.destroy()
+
+    def event_array_activated(self, widget, arraynode):
+        shape = arraynode.datasource.get_shape(arraynode.sourcepath)
+        sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
+        source = self.datamodel[widget.get_cursor()[0][0:1]][2]
+
+        dialog = dialogs.ArrayDataSelection(self, shape)
+        retcode = dialog.run()
+
+        if retcode == gtk.RESPONSE_ACCEPT:
+            data = dialog.get_content()
+            nthplot = self.plotnotebook.get_current_page()
+            xname = data["x_column"]
+            if xname:
+                xnode = plottree.DataNode(xname, "xaxis")
+                xnode.set_data(source, sourcename, arraynode.sourcepath, xname)
+            else:
+                xnode = plottree.DataNode('generic', "xaxis")
+            xpath = self.plottree.add_node((nthplot,0), xnode)
+
+            for yname in data["y_columns"]:
+                ynode = plottree.DataNode(arraynode.name + yname, "yaxis")
+                ynode.set_data(source, sourcename, arraynode.sourcepath, yname)
+                ypath = self.plottree.add_node(xpath, ynode)
+                self.plottree.add_line(ypath)
+
+            self.plottree.expand_row((nthplot,), True)
+            self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
+
         dialog.destroy()
         
 

@@ -40,6 +40,10 @@ class DataTree(gtk.TreeView):
                      'table-activated':
                      ( gobject.SIGNAL_NO_RECURSE,
                        gobject.TYPE_NONE,
+                       (gobject.TYPE_OBJECT,)),
+                     'array-activated':
+                     ( gobject.SIGNAL_NO_RECURSE,
+                       gobject.TYPE_NONE,
                        (gobject.TYPE_OBJECT,))
                      }
     
@@ -100,9 +104,16 @@ class DataTree(gtk.TreeView):
         self.emit('info-message', m[path][2].getinfo())
 
     def event_row_activated(self, treeview, path, column):
+        """
+        This event is triggered if a tree element is double clicked
+        I will emit a new signal to the gui which nodetype has been
+        activated
+        """
         m = treeview.get_model()
         node = m[path][2]
         if node.gettype() == "table":
             self.emit('table-activated', node)
+        elif node.gettype() in ["array2d", "array3d"]:
+            self.emit('array-activated', node)
 
         

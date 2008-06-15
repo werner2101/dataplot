@@ -69,8 +69,11 @@ class TestPlugin(datasource.DataSource):
         return "Sourcename: " + self.name \
                + "\nFilename: " + self.filename
         
-    def getcolumnnames(self, path=None):
+    def getcolumnnames(self, path):
         return self.testtabledict[tuple(path)].keys()
+
+    def get_shape(self, path):
+        return self.testdatadict[tuple(path)].shape
 
     def gettableinfo(self, path):
         return "Colnames: " + " ".join(self.getcolumnnames(path)) + "\n"

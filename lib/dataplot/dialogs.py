@@ -86,6 +86,121 @@ class TableDataSelection(gtk.Dialog):
         mm[path][1] = not mm[path][1]
 
 
+class ArrayDataSelection(gtk.Dialog):
+
+    returns = {}
+
+    def __init__(self, parent, shape):
+        gtk.Dialog.__init__(self, "Array Selection", parent,
+                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                            (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                             gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+        self.shape = shape
+        self.sel_ranks = []
+
+        hbox = gtk.HBox()
+        self.vbox.pack_start(hbox, False, True)
+        for rank in xrange(len(self.shape)):
+            hbox.pack_start(gtk.Label("D%i: " % rank), False, False)
+
+            liststore = gtk.ListStore(gobject.TYPE_STRING)
+            sel = [ '%i'%i for i in xrange(self.shape[rank]) ]
+            for n in ['Var', 'Sel'] + sel:
+                liststore.append((n,))
+
+            combo = gtk.ComboBox(liststore)
+            cell = gtk.CellRendererText()
+            combo.pack_start(cell, True)
+            combo.add_attribute(cell, 'text', 0)
+            if rank == list(self.shape).index(max(self.shape)):
+                combo.set_active(0)
+            else:
+                combo.set_active(1)
+            self.sel_ranks.append(combo)
+            hbox.pack_start(combo, False, False)
+            combo.connect("changed", self.event_selection_changed)
+
+
+        scrollwin = gtk.ScrolledWindow()
+        scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scrollwin.set_size_request(-1, 200)
+
+        self.listview = gtk.TreeView()
+        x_cell = gtk.CellRendererToggle()
+        x_cell.set_property("radio", True)
+        x_cell.set_property("activatable", True)
+        x_cell.connect('toggled', self.x_toggle, self.listview)
+                      
+        y_cell = gtk.CellRendererToggle()
+        y_cell.set_property("activatable", True)
+        y_cell.connect('toggled', self.y_toggle, self.listview)
+
+        self.listview.append_column(gtk.TreeViewColumn("X", x_cell , active=0))
+        self.listview.append_column(gtk.TreeViewColumn("Y", y_cell , active=1))
+        self.listview.append_column(gtk.TreeViewColumn("Slice", gtk.CellRendererText(), text=2))
+
+        scrollwin.add_with_viewport(self.listview)
+        self.vbox.add(scrollwin)
+
+        self.fill_model()
+        self.show_all()
+
+    def fill_model(self):
+        liststore = gtk.ListStore(gobject.TYPE_BOOLEAN, gobject.TYPE_BOOLEAN, str)
+        groups = []
+        for rank, combo in enumerate(self.sel_ranks):
+            content = combo.get_model()[combo.get_active()][0]
+            if content == "Var":
+                groups.append([':'])
+            elif content == "Sel":
+                l = [ '%i'%i for i in xrange(self.shape[rank]) ]
+                groups.append(l)
+            else:
+                groups.append([content])
+
+        sel = [""]
+        for g in groups:
+            sel_new = []
+            for s in sel:
+                sel_new.extend([ s + gm + ','  for gm in g ])
+            sel = sel_new
+        
+        for s in sel:
+            liststore.append([False, False, '[' + s[:-1] + ']'])
+        self.listview.set_model(liststore)
+
+
+    def get_content(self):
+        x,y = None, []
+        for row in self.listview.get_model():
+            if row[0] == True:
+                x = row[2]
+            if row[1] == True:
+                y.append(row[2])
+        return {"x_column": x,
+                "y_columns": y}
+            
+    def event_selection_changed(self, combo):
+        self.fill_model()
+        
+    def x_toggle(self, cell, path, listview):
+        """
+        Callback when the toggle buttons of the X-row is toggled.
+        Only allow one x-value to be selected from the x-row
+        """
+        mm = listview.get_model()
+        newstate = not mm[path][0]
+        for row in mm:
+            row[0] = False
+        mm[path][0] = newstate
+        
+    
+    def y_toggle(self, cell, path, listview):
+        mm = listview.get_model()
+        mm[path][1] = not mm[path][1]
+
+
+
 class SingleplotOptions(gtk.Dialog):
 
     returns = {}
