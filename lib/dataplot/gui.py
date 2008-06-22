@@ -20,10 +20,12 @@
 import os.path
 
 import gtk, gobject, gtk.gdk
+import xml.dom.minidom
 
 import datatree, plottree, dialogs
 
 import testplugin, gnucapplugin
+
 
 class MainWindow(gtk.Window):
 
@@ -214,21 +216,42 @@ class MainWindow(gtk.Window):
         toolbar.add(button_deleteplot)
 
         
+    #################### events
     def event_file_new(self, menuitem):
         self.delete_plot(self)
         self.delete_data(self)
 
         self.filename = None
-        self.filenamechanged = True
+        self.filenchanged = True
 
     def event_file_open(self, menuitem):
-        print "event_file_open not implemented yet"
+        dialog = gtk.FileChooserDialog("Load data and plot configuration", parent=self,
+                                       action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                       buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                                gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+
+        if dialog.run() == gtk.RESPONSE_ACCEPT:
+            filename = dialog.get_filename()
+            self.file_load(filename)
+        dialog.destroy()
 
     def event_file_save(self, menuitem):
-        print "event_file_save not implemented yet"
+        if self.filename:
+            self.file_save(self.filename)
+        else:
+            self.event_file_saveas(menuitem)
 
     def event_file_saveas(self, menuitem):
-        print "event_file_saveas not implemented yet"
+        dialog = gtk.FileChooserDialog("Save data and plot configuration", parent=self,
+                                       action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                       buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                                gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+        if dialog.run() == gtk.RESPONSE_ACCEPT:
+            filename = dialog.get_filename()
+            self.file_save(filename)
+            self.filename = filename
+
+        dialog.destroy()
 
     def event_file_quit(self, menuitem):
         self.handle_quit()
@@ -237,6 +260,7 @@ class MainWindow(gtk.Window):
         if filetype == None:
             title = "Load data source"
             print "TODO: load data without plugin"
+            return
         else:
             title = "Load " + filetype + " data source"
         dialog = gtk.FileChooserDialog(title, parent=self,
@@ -249,7 +273,7 @@ class MainWindow(gtk.Window):
             basename = os.path.basename(filename)
             # TODO: guess plugin if filetype is None
             # TODO: what shall we do with duplicate source names
-            self.load_file(filename, basename, self.plugins[filetype])
+            self.data_load(filename, basename, self.plugins[filetype])
 
         dialog.destroy()
 
@@ -349,6 +373,42 @@ class MainWindow(gtk.Window):
     def event_new_plot(self, widget):
         self.new_plot("newplot")
 
+    def event_delete_plot(self, name):
+        delete_plot(self.plotnotebook.get_current_page())
+
+
+    #################### BACKEND functions
+    def file_save(self, filename):
+        dom = xml.dom.minidom.getDOMImplementation().createDocument(None, "dataplot", None)
+        top = dom.documentElement
+        sources = dom.createElement("datasources")
+        top.appendChild(sources)
+        for s in self.datamodel:
+            source = dom.createElement("datasource")
+            source.setAttribute("name", s[1])
+            source.setAttribute("filename", s[2].filename)
+            source.setAttribute("plugin", s[2].name)
+            sources.appendChild(source)
+        open(filename, "w").write(dom.toprettyxml("  "))
+
+    def file_load(self, filename):
+        self.delete_plot(self)
+        self.delete_data(self)
+
+        dom = xml.dom.minidom.parse(filename)
+        data = dom.getElementsByTagName("dataplot")[0]
+        sources = data.getElementsByTagName("datasources")[0]
+        for s in sources.getElementsByTagName("datasource"):
+            plugin = s.getAttribute("plugin")
+            filename = s.getAttribute("filename")
+            name = s.getAttribute("name")
+            self.data_load(filename, name, self.plugins[plugin])
+        
+
+        self.filename = filename
+        self.filechanged = False
+        
+        
     def new_plot(self, name):
         plot = plottree.PlotNode(name)
         path = self.plottree.add_node(None, plot)
@@ -393,7 +453,7 @@ class MainWindow(gtk.Window):
             self.datamodel.remove(self.datamodel.get_iter((n,)))
 
 
-    def load_file(self, filename, name, plugin):
+    def data_load(self, filename, name, plugin):
         mm = self.datamodel
         ii = mm.append(None)
         parent = mm.get_path(ii)
@@ -406,9 +466,6 @@ class MainWindow(gtk.Window):
                    1, obj.getname(),
                    2, obj)
 
-    def event_delete_plot(self, name):
-        delete_plot(self.plotnotebook.get_current_page())
-
 
     def test(self):
 
@@ -416,10 +473,10 @@ class MainWindow(gtk.Window):
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
 
-        self.load_file("abc filename", "abc", self.plugins["test"])
-        self.load_file("lib/dataplot/plugins/testdata/dc_current_gain_t0.data",
+        self.data_load("abc filename", "abc", self.plugins["test"])
+        self.data_load("lib/dataplot/plugins/testdata/dc_current_gain_t0.data",
                        "dc_current_gain_t0.data", self.plugins["gnucap"])
-        self.load_file("lib/dataplot/plugins/testdata/saturation_voltages_t0.data",
+        self.data_load("lib/dataplot/plugins/testdata/saturation_voltages_t0.data",
                        "saturation_voltages_t0.data", self.plugins["gnucap"])
 
         self.new_plot("plot2")
