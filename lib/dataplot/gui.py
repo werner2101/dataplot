@@ -17,6 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import os.path
 
 import gtk, gobject, gtk.gdk
 
@@ -168,6 +169,21 @@ class MainWindow(gtk.Window):
         menubar.append(menuitem_file)
 
         ## Data menu entries
+        menuitem_data_load = gtk.MenuItem('Load source')
+        menuitem_data_load.connect('activate', self.event_data_load, None)
+        menu_data.append(menuitem_data_load)
+
+        sep = gtk.SeparatorMenuItem()
+        sep.set_sensitive(False)
+        menu_data.append(sep)
+
+        for k in self.plugins.keys():
+            ## load a file with a user defined plugin
+            ## this is required if the file type can't be guessed from the filename
+            menuitem_data_load = gtk.MenuItem('Load ' + k + ' file')
+            menuitem_data_load.connect('activate', self.event_data_load, k)
+            menu_data.append(menuitem_data_load)
+
         menubar.append(menuitem_data)
 
         ## Plot menu entries
@@ -198,14 +214,12 @@ class MainWindow(gtk.Window):
         toolbar.add(button_deleteplot)
 
         
-
     def event_file_new(self, menuitem):
         self.delete_plot(self)
         self.delete_data(self)
 
         self.filename = None
         self.filenamechanged = True
-        
 
     def event_file_open(self, menuitem):
         print "event_file_open not implemented yet"
@@ -218,6 +232,26 @@ class MainWindow(gtk.Window):
 
     def event_file_quit(self, menuitem):
         self.handle_quit()
+
+    def event_data_load(self, menuitem, filetype):
+        if filetype == None:
+            title = "Load data source"
+            print "TODO: load data without plugin"
+        else:
+            title = "Load " + filetype + " data source"
+        dialog = gtk.FileChooserDialog(title, parent=self,
+                                       action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                       buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                                gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+
+        if dialog.run() == gtk.RESPONSE_ACCEPT:
+            filename = dialog.get_filename()
+            basename = os.path.basename(filename)
+            # TODO: guess plugin if filetype is None
+            # TODO: what shall we do with duplicate source names
+            self.load_file(filename, basename, self.plugins[filetype])
+
+        dialog.destroy()
 
     def event_delete(self, window, event):
         self.handle_quit()
