@@ -22,6 +22,7 @@ import gtk, gobject, gtk.gdk
 
 import datatree, plottree, dialogs
 
+import testplugin, gnucapplugin
 
 class MainWindow(gtk.Window):
 
@@ -29,6 +30,7 @@ class MainWindow(gtk.Window):
         gtk.Window.__init__(self)
 
         self.init_data()
+        self.init_plugins()
         self.init_gui()
         
         ########## signals
@@ -58,6 +60,12 @@ class MainWindow(gtk.Window):
         self.plotmodel = gtk.TreeStore(gtk.gdk.Pixbuf,
                                        gobject.TYPE_STRING,
                                        gobject.TYPE_OBJECT)
+
+    def init_plugins(self):
+        self.plugins = {}
+        self.plugins["test"] = testplugin.TestPlugin
+        self.plugins["gnucap"] = gnucapplugin.GnucapPlugin
+
 
     def init_gui(self):
         self.set_default_size(800,600)
@@ -351,6 +359,19 @@ class MainWindow(gtk.Window):
             self.datamodel.remove(self.datamodel.get_iter((n,)))
 
 
+    def load_file(self, filename, name, plugin):
+        mm = self.datamodel
+        ii = mm.append(None)
+        parent = mm.get_path(ii)
+        datasource = plugin(filename)
+        mm.set(ii, 0, self.datatree.icons["file"], 1, name, 2, datasource)
+
+        for (path, obj) in datasource.load():
+            mm.set(mm.append(mm.get_iter(parent + tuple(path))),
+                   0, self.datatree.icons[obj.gettype()],
+                   1, obj.getname(),
+                   2, obj)
+
     def event_delete_plot(self, name):
         delete_plot(self.plotnotebook.get_current_page())
 
@@ -361,11 +382,11 @@ class MainWindow(gtk.Window):
         self.errorlog.get_buffer().set_text("hello errorlog")
         self.messagelog.get_buffer().set_text("hello messagelog")
 
-        self.datatree.load_file("abc filename", "abc", "test")
-        self.datatree.load_file("lib/dataplot/plugins/testdata/dc_current_gain_t0.data",
-                                "dc_current_gain_t0.data", "gnucap")
-        self.datatree.load_file("lib/dataplot/plugins/testdata/saturation_voltages_t0.data",
-                                "saturation_voltages_t0.data", "gnucap")
+        self.load_file("abc filename", "abc", self.plugins["test"])
+        self.load_file("lib/dataplot/plugins/testdata/dc_current_gain_t0.data",
+                       "dc_current_gain_t0.data", self.plugins["gnucap"])
+        self.load_file("lib/dataplot/plugins/testdata/saturation_voltages_t0.data",
+                       "saturation_voltages_t0.data", self.plugins["gnucap"])
 
         self.new_plot("plot2")
         

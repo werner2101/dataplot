@@ -20,9 +20,6 @@
 import gtk, gobject, gtk.gdk
 import numpy
 
-import testplugin, gnucapplugin
-
-
 
 bitmaps = [["file", "data/bitmaps/data_file.png"],
            ["folder", "data/bitmaps/data_folder.png"],
@@ -60,7 +57,6 @@ class DataTree(gtk.TreeView):
         self.set_model(datamodel)
 
         self.load_icons()
-        self.load_plugins()
 
         ## SETUP signals
         self.connect("cursor-changed", self.event_cursor_changed)
@@ -70,29 +66,6 @@ class DataTree(gtk.TreeView):
         self.icons = {}
         for name,filename in bitmaps:
             self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
-
-    def load_plugins(self):
-        self.plugins = {}
-        self.plugins["test"] = testplugin.TestPlugin
-        self.plugins["gnucap"] = gnucapplugin.GnucapPlugin
-
-
-    def load_file(self, filename, name, plugin):
-        mm = self.get_model()
-        ii = mm.append(None)
-        parent = mm.get_path(ii)
-        datasource = self.plugins[plugin](filename)
-        mm.set(ii, 0, self.icons["file"], 1, name, 2, datasource)
-
-        for (path, obj) in datasource.load():
-            self.new_node(parent + tuple(path), obj)
-
-    def new_node(self, parent, node):
-        mm = self.get_model()
-        mm.set(mm.append(mm.get_iter(parent)),
-               0, self.icons[node.gettype()],
-               1, node.getname(),
-               2, node)
 
     def event_cursor_changed(self, treeview):
         """
