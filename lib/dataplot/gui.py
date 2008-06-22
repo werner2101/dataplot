@@ -27,6 +27,39 @@ class MainWindow(gtk.Window):
 
     def __init__(self, args=None):
         gtk.Window.__init__(self)
+
+        self.init_data()
+        self.init_gui()
+        
+        ########## signals
+        self.connect("delete_event", self.event_delete)
+        self.plotnotebook.connect("switch-page", self.event_notebook_changed)
+        self.datatree.connect("info-message", self.event_info_message)
+        self.datatree.connect("table-activated", self.event_table_activated)
+        self.datatree.connect("array-activated", self.event_array_activated)
+        self.plottree.connect("plotnode-activated", self.event_plotnode_acitvated)
+        self.plottree.connect("info-message", self.event_info_message)
+
+        ########## subsystem inits / handle cli args
+        self.new_plot("plot1")
+
+        ########## development tests
+        self.test()
+
+
+    def init_data(self):
+        self.filename = None
+        self.filechanged = False
+
+        self.datamodel = gtk.TreeStore(gtk.gdk.Pixbuf,
+                                       gobject.TYPE_STRING,
+                                       gobject.TYPE_OBJECT)
+
+        self.plotmodel = gtk.TreeStore(gtk.gdk.Pixbuf,
+                                       gobject.TYPE_STRING,
+                                       gobject.TYPE_OBJECT)
+
+    def init_gui(self):
         self.set_default_size(800,600)
 
         self.vbox1 = gtk.VBox()
@@ -51,18 +84,12 @@ class MainWindow(gtk.Window):
         scrollwin = gtk.ScrolledWindow()
         scrollwin.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.hpan2.add1(scrollwin)
-        self.datamodel = gtk.TreeStore(gtk.gdk.Pixbuf,
-                                       gobject.TYPE_STRING,
-                                       gobject.TYPE_OBJECT)
         self.datatree = datatree.DataTree(self.datamodel)
         scrollwin.add_with_viewport(self.datatree)
 
         scrollwin = gtk.ScrolledWindow()
         scrollwin.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.hpan2.add2(scrollwin)
-        self.plotmodel = gtk.TreeStore(gtk.gdk.Pixbuf,
-                                       gobject.TYPE_STRING,
-                                       gobject.TYPE_OBJECT)
         self.plottree = plottree.PlotTree(self.plotmodel)
         scrollwin.add_with_viewport(self.plottree)
 
@@ -81,24 +108,7 @@ class MainWindow(gtk.Window):
 
         self.statusbar = gtk.Statusbar()
         self.vbox1.pack_start(self.statusbar, False)
-
-        ########## subsystem inits
-        self.new_plot("plot1")
-
-        #self.menubar =
-
-        ########## signals
-        self.connect("delete_event", self.event_delete)
-        self.plotnotebook.connect("switch-page", self.event_notebook_changed)
-        self.datatree.connect("info-message", self.event_info_message)
-        self.datatree.connect("table-activated", self.event_table_activated)
-        self.datatree.connect("array-activated", self.event_array_activated)
-        self.plottree.connect("plotnode-activated", self.event_plotnode_acitvated)
-        self.plottree.connect("info-message", self.event_info_message)
-
-
-        self.test()
-
+        
 
     def init_menubar(self):
         """
