@@ -192,7 +192,12 @@ class MainWindow(gtk.Window):
         
 
     def event_file_new(self, menuitem):
-        print "event_file_new not implemented yet"
+        self.delete_plot(self)
+        self.delete_data(self)
+
+        self.filename = None
+        self.filenamechanged = True
+        
 
     def event_file_open(self, menuitem):
         print "event_file_open not implemented yet"
@@ -311,13 +316,43 @@ class MainWindow(gtk.Window):
         plot.plot.show()
         self.plotnotebook.set_current_page(-1)
 
+    def delete_plot(self, nth = None):
+        """
+        Remove the nth plot from the gui. If the number of the plot is None,
+        all plots are removed.
+        If there's no plot remaining, create an empty plot.
+        """
 
-    def event_delete_plot(self, name):
-        nth = self.plotnotebook.get_current_page()
-        self.plotnotebook.remove_page(nth)
-        self.plotmodel.remove(self.plotmodel.get_iter((nth,)))
+        if not nth:
+            deletelist = [ nth ]
+        else:
+            # create a delete list in reversed order
+            deletelist = range(self.plotnotebook.get_n_pages() - 1, -1, -1)
+        
+        for n in deletelist:
+            self.plotnotebook.remove_page(n)
+            self.plotmodel.remove(self.plotmodel.get_iter((n,)))
+            
         if self.plotnotebook.get_n_pages() == 0:
             self.new_plot("plot1")
+
+    def delete_data(self, nth = None):
+        """
+        Remove the nth data source from the gui. If the number of the data source
+        is None, all plots are removed.
+        """
+        if not nth:
+            deletelist = [ nth ]
+        else:
+            # create a delete list in reversed order
+            deletelist = range(len(self.datamodel) - 1, -1, -1)
+
+        for n in deletelist:
+            self.datamodel.remove(self.datamodel.get_iter((n,)))
+
+
+    def event_delete_plot(self, name):
+        delete_plot(self.plotnotebook.get_current_page())
 
 
     def test(self):
