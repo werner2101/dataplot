@@ -374,7 +374,11 @@ class MainWindow(gtk.Window):
         self.new_plot("newplot")
 
     def event_delete_plot(self, name):
-        delete_plot(self.plotnotebook.get_current_page())
+        self.delete_plot(self.plotnotebook.get_current_page())
+        ## recreate one empty plot if we've deleted the last plot
+        if self.plotnotebook.get_n_pages() == 0:
+            self.new_plot("plot1")
+        
 
 
     #################### BACKEND functions
@@ -389,24 +393,97 @@ class MainWindow(gtk.Window):
             source.setAttribute("filename", s[2].filename)
             source.setAttribute("plugin", s[2].name)
             sources.appendChild(source)
+
+        plots = dom.createElement("plotdata")
+        top.appendChild(plots)
+        for plot in self.plotmodel:
+            plot_node = dom.createElement("plot")
+            plots.appendChild(plot_node)
+            plot_node.setAttribute("name", plot[1])
+
+            for subplot in plot.iterchildren():
+                subplot_node = dom.createElement("subplot")
+                plot_node.appendChild(subplot_node)
+                subplot_node.setAttribute("name", subplot[1])
+                properties = dom.createElement("properties")
+                subplot_node.appendChild(properties)
+                for k,v in subplot[2].get_properties().items():
+                    v = { None: "", True: "1", False: "0"}.get(v,v)
+                    properties.setAttribute(k, str(v))
+
+                for xaxis in subplot.iterchildren():
+                    xaxis_node = dom.createElement("xaxis")
+                    subplot_node.appendChild(xaxis_node)
+                    xaxis_node.setAttribute("name", xaxis[1])
+                    xsource_node = dom.createElement("datasource")
+                    xaxis_node.appendChild(xsource_node)
+                    for k,v in xaxis[2].get_source().items():
+                        v = { None: "", True: "1", False: "0"}.get(v,v)
+                        xsource_node.setAttribute(k, v)
+
+                    for yaxis in xaxis.iterchildren():
+                        yaxis_node = dom.createElement("yaxis")
+                        xaxis_node.appendChild(yaxis_node)
+                        yaxis_node.setAttribute("name", yaxis[1])
+                        ysource_node = dom.createElement("datasource")
+                        yaxis_node.appendChild(ysource_node)
+                        for k,v in yaxis[2].get_source().items():
+                            v = { None: "", True: "1", False: "0"}.get(v,v)
+                            ysource_node.setAttribute(k, v)
+                        
         open(filename, "w").write(dom.toprettyxml("  "))
 
     def file_load(self, filename):
         self.delete_plot(self)
         self.delete_data(self)
-
+        self.filename = filename
+        self.filechanged = False
+        source_dict = {}
+        
         dom = xml.dom.minidom.parse(filename)
         data = dom.getElementsByTagName("dataplot")[0]
         sources = data.getElementsByTagName("datasources")[0]
+        
         for s in sources.getElementsByTagName("datasource"):
             plugin = s.getAttribute("plugin")
-            filename = s.getAttribute("filename")
+            source_filename = s.getAttribute("filename")
             name = s.getAttribute("name")
-            self.data_load(filename, name, self.plugins[plugin])
-        
+            source_dict[name] = self.data_load(source_filename, name,
+                                               self.plugins[plugin])
 
-        self.filename = filename
-        self.filechanged = False
+        plotdata = data.getElementsByTagName("plotdata")[0]
+        for ip, plot in enumerate(plotdata.getElementsByTagName("plot")):
+            sp_path = self.new_plot(plot.getAttribute("name"))
+            print "plot ", plot.getAttribute("name")
+            for isp, subplot in enumerate(plot.getElementsByTagName("subplot")):
+                print " subplot ", subplot.getAttribute("name")
+                for ix, xaxis in enumerate(subplot.getElementsByTagName("xaxis")):
+                    xnode = plottree.DataNode(xaxis.getAttribute("name"), "xaxis")
+                    xsource = xaxis.getElementsByTagName("datasource")[0]
+                    if xsource.getAttribute("source") != "":
+                        xnode.set_data(source_dict[xsource.getAttribute("source")],
+                                       xsource.getAttribute("source"),
+                                       xsource.getAttribute("path").split(" "),
+                                       xsource.getAttribute("slicer"))
+                    xpath = self.plottree.add_node((ip,isp), xnode)
+                    print "  xaxis ",  xaxis.getAttribute("name")
+                    for iy, yaxis in enumerate(xaxis.getElementsByTagName("yaxis")):
+                        ynode = plottree.DataNode(yaxis.getAttribute("name"), "yaxis")
+                        ysource = yaxis.getElementsByTagName("datasource")[0]
+                        ynode.set_data(source_dict[ysource.getAttribute("source")],
+                                       ysource.getAttribute("source"),
+                                       ysource.getAttribute("path").split(" "),
+                                       ysource.getAttribute("slicer"))
+                        ypath = self.plottree.add_node((ip,isp,ix), ynode)
+                        self.plottree.add_line(ypath)
+                        print "   yaxis ",  yaxis.getAttribute("name")
+
+                properties = subplot.getElementsByTagName("properties")[0]
+#                self.plotmodel[ip,isp][2].set_properties(properties.getAtributes())
+                self.plotmodel[ip,isp][2].update()
+                        
+                        
+
         
         
     def new_plot(self, name):
@@ -417,6 +494,7 @@ class MainWindow(gtk.Window):
         self.plotnotebook.append_page(plot.plot, gtk.Label(name))
         plot.plot.show()
         self.plotnotebook.set_current_page(-1)
+        return path
 
     def delete_plot(self, nth = None):
         """
@@ -434,9 +512,7 @@ class MainWindow(gtk.Window):
         for n in deletelist:
             self.plotnotebook.remove_page(n)
             self.plotmodel.remove(self.plotmodel.get_iter((n,)))
-            
-        if self.plotnotebook.get_n_pages() == 0:
-            self.new_plot("plot1")
+
 
     def delete_data(self, nth = None):
         """
@@ -465,6 +541,7 @@ class MainWindow(gtk.Window):
                    0, self.datatree.icons[obj.gettype()],
                    1, obj.getname(),
                    2, obj)
+        return datasource
 
 
     def test(self):

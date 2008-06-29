@@ -232,7 +232,7 @@ class DataNode(gobject.GObject):
         self.nodetype = nodetype
         self.datasource = None
         self.sourcename = None
-        self.datapath = None
+        self.datapath = []
         self.dataslicer = None
         self.simpleoperator = None
 
@@ -252,6 +252,12 @@ class DataNode(gobject.GObject):
             return eval('data'+self.dataslicer)
         else:
             return data
+
+    def get_source(self):
+        return { "source": self.sourcename,
+                 "path": " ".join(self.datapath),
+                 "slicer": self.dataslicer,
+                 "operator": self.simpleoperator}
 
     def getinfo(self):
         x = ["Name: " + str(self.name),
