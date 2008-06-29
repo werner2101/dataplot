@@ -153,24 +153,25 @@ class PlotNode(gobject.GObject):
 class SubplotNode(gobject.GObject):
 
     nodetype = "singleplot"
+    lookup = {"1": True, "0": False}
 
     def __init__(self, name, figure, plot=111):
         gobject.GObject.__init__(self)
         self.name = name
         self.figure = figure
         self.axes = figure.add_subplot(plot)
-        self.properties = {'xmin': None,
-                           'xmax': None,
-                           'ymin': None,
-                           'ymax': None,
-                           'ylog': False,
-                           'xlog': False,
+        self.properties = {'xmin': "",
+                           'xmax': "",
+                           'ymin': "",
+                           'ymax': "",
+                           'ylog': "0",
+                           'xlog': "0",
                            'xlabel': "",
                            'ylabel': "",
                            'title': "",
-                           'grid': True,
-                           'legend': False}
-
+                           'grid': "1",
+                           'legend': "0"}
+        
 
     def getinfo(self):
         return "Subplot: " + self.name
@@ -180,12 +181,12 @@ class SubplotNode(gobject.GObject):
         self.update()
 
     def update(self):
-        if self.properties["xlog"]:
+        if self.properties["xlog"] == "1":
             self.axes.set_xscale('log')
         else:
             self.axes.set_xscale('linear')
 
-        if self.properties["ylog"]:
+        if self.properties["ylog"] == "1":
             self.axes.set_yscale('log')
         else:
             self.axes.set_yscale('linear')
@@ -194,32 +195,32 @@ class SubplotNode(gobject.GObject):
         self.axes.set_ylabel(self.properties['ylabel'])
         self.axes.set_title(self.properties['title'])
 
-        self.axes.grid(self.properties['grid'])
+        self.axes.grid(self.lookup[self.properties['grid']])
 
-        if self.properties['legend']:
+        if self.properties['legend'] == "1":
             self.axes.legend(loc='best')
         else:
             l = self.axes.legend(())
             l.draw_frame(False)
                              
         self.axes.axis('auto')
-        if (self.properties["xmin"]):
-            self.axes.axis(xmin=self.properties["xmin"])
-        if (self.properties["xmax"]):
-            self.axes.axis(xmax=self.properties["xmax"])
-        if (self.properties["ymin"]):
-            self.axes.axis(ymin=self.properties["ymin"])
-        if (self.properties["ymax"]):
-            self.axes.axis(ymax=self.properties["ymax"])
+        if (self.properties["xmin"]) != "":
+            self.axes.axis(xmin=float(self.properties["xmin"]))
+        if (self.properties["xmax"]) != "":
+            self.axes.axis(xmax=float(self.properties["xmax"]))
+        if (self.properties["ymin"]) != "":
+            self.axes.axis(ymin=float(self.properties["ymin"]))
+        if (self.properties["ymax"]) != "":
+            self.axes.axis(ymax=float(self.properties["ymax"]))
 
         self.figure.canvas.draw()
 
     def get_properties(self):
         [xmin, xmax, ymin, ymax] = self.axes.axis()
-        self.properties["xmin"] = xmin
-        self.properties["xmax"] = xmax
-        self.properties["ymin"] = ymin
-        self.properties["ymax"] = ymax
+        self.properties["xmin"] = str(xmin)
+        self.properties["xmax"] = str(xmax)
+        self.properties["ymin"] = str(ymin)
+        self.properties["ymax"] = str(ymax)
         return self.properties
         
 

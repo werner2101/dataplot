@@ -454,9 +454,7 @@ class MainWindow(gtk.Window):
         plotdata = data.getElementsByTagName("plotdata")[0]
         for ip, plot in enumerate(plotdata.getElementsByTagName("plot")):
             sp_path = self.new_plot(plot.getAttribute("name"))
-            print "plot ", plot.getAttribute("name")
             for isp, subplot in enumerate(plot.getElementsByTagName("subplot")):
-                print " subplot ", subplot.getAttribute("name")
                 for ix, xaxis in enumerate(subplot.getElementsByTagName("xaxis")):
                     xnode = plottree.DataNode(xaxis.getAttribute("name"), "xaxis")
                     xsource = xaxis.getElementsByTagName("datasource")[0]
@@ -466,7 +464,6 @@ class MainWindow(gtk.Window):
                                        xsource.getAttribute("path").split(" "),
                                        xsource.getAttribute("slicer"))
                     xpath = self.plottree.add_node((ip,isp), xnode)
-                    print "  xaxis ",  xaxis.getAttribute("name")
                     for iy, yaxis in enumerate(xaxis.getElementsByTagName("yaxis")):
                         ynode = plottree.DataNode(yaxis.getAttribute("name"), "yaxis")
                         ysource = yaxis.getElementsByTagName("datasource")[0]
@@ -476,16 +473,12 @@ class MainWindow(gtk.Window):
                                        ysource.getAttribute("slicer"))
                         ypath = self.plottree.add_node((ip,isp,ix), ynode)
                         self.plottree.add_line(ypath)
-                        print "   yaxis ",  yaxis.getAttribute("name")
 
                 properties = subplot.getElementsByTagName("properties")[0]
-#                self.plotmodel[ip,isp][2].set_properties(properties.getAtributes())
+                self.plotmodel[ip,isp][2].set_properties(dict(properties.attributes.items()))
                 self.plotmodel[ip,isp][2].update()
                         
-                        
 
-        
-        
     def new_plot(self, name):
         plot = plottree.PlotNode(name)
         path = self.plottree.add_node(None, plot)

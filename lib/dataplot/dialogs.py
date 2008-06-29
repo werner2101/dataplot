@@ -248,20 +248,20 @@ class SingleplotOptions(gtk.Dialog):
         table.attach(self.ylabel_entry, 1, 2, 2, 3)
 
         self.grid_check = gtk.CheckButton("Enable Grid")
-        self.grid_check.set_active(prop.get("grid", True))
+        self.grid_check.set_active(prop.get("grid", "1") == "1")
         avbox.add(self.grid_check)
 
         self.legend_check = gtk.CheckButton("Enable Legend")
-        self.legend_check.set_active(prop.get("legend", True))
+        self.legend_check.set_active(prop.get("legend", "1") == "1")
         avbox.add(self.legend_check)
 
         hbox = gtk.HBox()
         avbox.add(hbox)
         self.xlog_check = gtk.CheckButton("Logarithmic x-axis")
-        self.xlog_check.set_active(prop.get("xlog", False))
+        self.xlog_check.set_active(prop.get("xlog", "0") == "1")
         hbox.add(self.xlog_check)
         self.ylog_check = gtk.CheckButton("Logarithmic y-axis")
-        self.ylog_check.set_active(prop.get("ylog", False))
+        self.ylog_check.set_active(prop.get("ylog", "0") == "1")
         hbox.add(self.ylog_check)
 
         ## Axis Settings
@@ -283,10 +283,10 @@ class SingleplotOptions(gtk.Dialog):
         self.xmax_check = gtk.CheckButton()
         self.xmax_check.set_active(True)
         self.xmin_entry = gtk.Entry()
-        self.xmin_entry.set_text(str(prop.get("xmin", 0.0)))
+        self.xmin_entry.set_text(prop.get("xmin", "0.0"))
         self.xmin_entry.set_width_chars(10)
         self.xmax_entry = gtk.Entry()
-        self.xmax_entry.set_text(str(prop.get("xmax", 0.0)))
+        self.xmax_entry.set_text(prop.get("xmax", "1.0"))
         self.xmax_entry.set_width_chars(10)
 
         self.ymin_check = gtk.CheckButton()
@@ -294,10 +294,10 @@ class SingleplotOptions(gtk.Dialog):
         self.ymax_check = gtk.CheckButton()
         self.ymax_check.set_active(True)
         self.ymin_entry = gtk.Entry()
-        self.ymin_entry.set_text(str(prop.get("ymin", 0.0)))
+        self.ymin_entry.set_text(prop.get("ymin", "0.0"))
         self.ymin_entry.set_width_chars(10)
         self.ymax_entry = gtk.Entry()
-        self.ymax_entry.set_text(str(prop.get("ymax", 0.0)))
+        self.ymax_entry.set_text(prop.get("ymax", "0.0"))
         self.ymax_entry.set_width_chars(10)
 
 
@@ -326,32 +326,31 @@ class SingleplotOptions(gtk.Dialog):
         entry.set_sensitive(widget.get_active())
 
     def get_content(self):
+        lookup = {True: "1", False: "0"}
+        prop = {"xmin": "",
+                "xmax": "",
+                "ymin": "",
+                "ymax": ""}
 
-        prop = {"xmin": None,
-                "xmax": None,
-                "ymin": None,
-                "ymax": None}
-
-        prop["grid"] = self.grid_check.get_active()
-        prop["legend"] = self.legend_check.get_active()
-        prop["xlog"] = self.xlog_check.get_active()
-        prop["ylog"] = self.ylog_check.get_active()
+        prop["grid"] = lookup[self.grid_check.get_active()]
+        prop["legend"] = lookup[self.legend_check.get_active()]
+        prop["xlog"] = lookup[self.xlog_check.get_active()]
+        prop["ylog"] = lookup[self.ylog_check.get_active()]
         
         prop["title"] = self.title_entry.get_text()
         prop["xlabel"] = self.xlabel_entry.get_text()
         prop["ylabel"] = self.ylabel_entry.get_text()
         
         if (self.xmin_check.get_active()):
-            prop["xmin"] = float(self.xmin_entry.get_text())
+            prop["xmin"] = self.xmin_entry.get_text()
         if (self.xmax_check.get_active()):
-            prop["xmax"] = float(self.xmax_entry.get_text())
+            prop["xmax"] = self.xmax_entry.get_text()
         if (self.ymin_check.get_active()):
-            prop["ymin"] = float(self.ymin_entry.get_text())
+            prop["ymin"] = self.ymin_entry.get_text()
         if (self.ymax_check.get_active()):
-            prop["ymax"] = float(self.ymax_entry.get_text())
+            prop["ymax"] = self.ymax_entry.get_text()
 
         return prop
-            
         
     def x_toggle(self, cell, path, listview):
         """
