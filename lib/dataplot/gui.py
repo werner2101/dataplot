@@ -24,7 +24,7 @@ import xml.dom.minidom
 
 import datatree, plottree, dialogs
 
-import testplugin, gnucapplugin
+import testplugin, gnucapplugin, spiceplugin
 
 
 class MainWindow(gtk.Window):
@@ -68,6 +68,7 @@ class MainWindow(gtk.Window):
         self.plugins = {}
         self.plugins["test"] = testplugin.TestPlugin
         self.plugins["gnucap"] = gnucapplugin.GnucapPlugin
+        self.plugins["spice"] = spiceplugin.SpicePlugin
 
 
     def init_gui(self):
