@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
+import math
 import gtk, gobject, gtk.gdk
 import numpy
 import matplotlib.figure
@@ -171,7 +172,109 @@ class SubplotNode(gobject.GObject):
                            'title': "",
                            'grid': "1",
                            'legend': "0"}
-        
+        self.figure.canvas.connect('scroll_event', self.event_scroll)
+
+
+    def event_scroll(self, widget, event):
+        if event.state & gtk.gdk.CONTROL_MASK:
+            if event.state & gtk.gdk.SHIFT_MASK:
+                if event.direction == gtk.gdk.SCROLL_UP:
+                    self.zoomy("out")
+                else:
+                    self.zoomy("in")
+            else:
+                if event.direction == gtk.gdk.SCROLL_UP:
+                    self.zoomx("out")
+                else:
+                    self.zoomx("in")
+        else:
+            if event.state & gtk.gdk.SHIFT_MASK:
+                if event.direction == gtk.gdk.SCROLL_UP:
+                    self.pany("up")
+                else:
+                    self.pany("down")
+            else:
+                if event.direction == gtk.gdk.SCROLL_UP:
+                    self.panx("right")
+                else:
+                    self.panx("left")
+        self.figure.canvas.draw()
+
+    def zoomx(self, direction="in"):
+        [xmin, xmax, ymin, ymax] = self.axes.axis()
+        if direction == "out":
+            if self.properties["xlog"] == "1":
+                qx = 0.2 * math.log10(xmax / xmin)
+                xmax = xmax * 10**(qx)
+                xmin = xmin * 10**(-qx)
+            else:
+                diffx = xmax - xmin
+                xmax = xmax + 0.2*diffx
+                xmin = xmin - 0.2*diffx
+        else:
+            if self.properties["xlog"] == "1":
+                qx = 0.1 * math.log10(xmax / xmin)
+                xmax = xmax * 10**(-qx)
+                xmin = xmin * 10**(qx)
+            else:
+                diffx = xmax - xmin
+                xmax = xmax - 0.1*diffx
+                xmin = xmin + 0.1*diffx
+        self.axes.axis(xmin=xmin, xmax=xmax)
+
+    def zoomy(self, direction="in"):
+        [xmin, xmax, ymin, ymax] = self.axes.axis()
+        if direction == "out":
+            if self.properties["ylog"] == "1":
+                qy = 0.2 * math.log10(ymax / ymin)
+                ymax = ymax * 10**(qy)
+                ymin = ymin * 10**(-qy)
+            else:
+                diffy = ymax - ymin
+                ymax = ymax + 0.2*diffy
+                ymin = ymin - 0.2*diffy
+        else:
+            if self.properties["ylog"] == "1":
+                qy = 0.1 * math.log10(ymax / ymin)
+                ymax = ymax * 10**(-qy)
+                ymin = ymin * 10**(qy)
+            else:
+                diffy = ymax - ymin
+                ymax = ymax - 0.1*diffy
+                ymin = ymin + 0.1*diffy
+        self.axes.axis(ymin=ymin, ymax=ymax)
+
+    def panx(self, direction="left"):
+        [xmin, xmax, ymin, ymax] = self.axes.axis()
+        if direction == 'left':
+            m = 1
+        else:
+            m = -1
+        if self.properties["xlog"] == "1":
+            qx = 0.1 * math.log10(xmax / xmin)
+            xmax = xmax * 10**(m*qx)
+            xmin = xmin * 10**(m*qx)
+        else:
+            diffx = 0.1 * (xmax - xmin)
+            xmax = xmax + m*diffx
+            xmin = xmin + m*diffx
+        self.axes.axis(xmin=xmin, xmax=xmax)
+
+    def pany(self, direction="up"):
+        [xmin, xmax, ymin, ymax] = self.axes.axis()
+        if direction == 'up':
+            m = 1
+        else:
+            m = -1
+        if self.properties["ylog"] == "1":
+            qy = 0.1 * math.log10(ymax / ymin)
+            ymax = ymax * 10**(m*qy)
+            ymin = ymin * 10**(m*qy)
+        else:
+            diffy = 0.1 * (ymax - ymin)
+            ymax = ymax + m*diffy
+            ymin = ymin + m*diffy
+        self.axes.axis(ymin=ymin, ymax=ymax)
 
     def getinfo(self):
         return "Subplot: " + self.name
