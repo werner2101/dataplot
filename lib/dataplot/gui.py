@@ -46,10 +46,14 @@ class MainWindow(gtk.Window):
         self.plottree.connect("info-message", self.event_info_message)
 
         ########## subsystem inits / handle cli args
-        self.new_plot("plot1")
+        if args:
+            self.file_load(args[0])
+        else:
+            self.new_plot("plot1")
+        
 
         ########## development tests
-        self.test()
+        #self.test()
 
 
     def init_data(self):
