@@ -25,6 +25,11 @@ import touchstone
 
 
 class TouchstonePlugin(datasource.DataSource):
+    """
+    The TouchstonePlugin adapts the touchstone class into a DataSource.
+    The s-parameters are presented in different formats as data tables.
+    Note: All tables represent the same data.
+    """
     name = "touchstone"
     
     def __init__(self, filename):

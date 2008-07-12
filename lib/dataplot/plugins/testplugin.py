@@ -39,6 +39,10 @@ testdata = [[[], ["root"], "testroot", "folder", None],
             [[0,1], ["root","arrays","data3d"], "data3d", "array3d", numpy.random.rand(10,20,30)]]
 
 class TestPlugin(datasource.DataSource):
+    """
+    The TestPlugin is used to test different kinds of DataSource elements.
+    It can be used as example to write other plugins
+    """
     name = "test"
     
     def __init__(self, filename):

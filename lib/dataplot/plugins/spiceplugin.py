@@ -26,6 +26,11 @@ import spice
 
 
 class SpicePlugin(datasource.DataSource):
+    """
+    The SpicePlugin adapts the spice class into a DataSource.
+    Each plot in the spice simulation data file is represented
+    as a table.
+    """
     name = "spice"
     
     def __init__(self, filename):
