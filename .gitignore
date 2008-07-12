@@ -1,2 +1,4 @@
 *~
 *.pyc
+doc/html
+doc/latex

@@ -59,21 +59,22 @@ class TestPlugin(datasource.DataSource):
                 self.testtabledict[tuple(path)] = data
         return ret
                 
+    def get_info(self):
+        return "Sourcename: " + self.name \
+               + "\nFilename: " + self.filename
+        
     def get_data(self, path, slicer):
         if self.testdatadict.has_key(tuple(path)):
             return self.testdatadict[tuple(path)]
         else:
             return self.testtabledict[tuple(path)][slicer]
 
-    def getinfo(self):
-        return "Sourcename: " + self.name \
-               + "\nFilename: " + self.filename
-        
-    def getcolumnnames(self, path):
-        return self.testtabledict[tuple(path)].keys()
-
     def get_shape(self, path):
         return self.testdatadict[tuple(path)].shape
 
-    def gettableinfo(self, path):
-        return "Colnames: " + " ".join(self.getcolumnnames(path)) + "\n"
+    def get_tableinfo(self, path):
+        return "Colnames: " + " ".join(self.get_columnnames(path)) + "\n"
+
+    def get_columnnames(self, path):
+        return self.testtabledict[tuple(path)].keys()
+

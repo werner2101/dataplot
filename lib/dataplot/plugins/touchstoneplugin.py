@@ -50,15 +50,15 @@ class TouchstonePlugin(datasource.DataSource):
         data = self.touchstone.get_sparameter_data(format=self.tabledict[tuple(path)])
         return data.get(slicer, None)
 
-    def getinfo(self):
+    def get_info(self):
         return "Sourcename: " + self.name \
                + "\nFilename: " + self.filename
         
-    def getcolumnnames(self, path):
+    def get_columnnames(self, path):
         names = self.touchstone.get_sparameter_names(self.tabledict[tuple(path)])
         return names
             
-    def gettableinfo(self, path):
+    def get_tableinfo(self, path):
         format = self.touchstone.get_format(self.tabledict[tuple(path)])
-        colnames = " ".join(self.getcolumnnames(path))
+        colnames = " ".join(self.get_columnnames(path))
         return "Format: %s\nColnames: %s\n" %(format, colnames)

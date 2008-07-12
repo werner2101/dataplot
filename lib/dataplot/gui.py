@@ -298,7 +298,7 @@ class MainWindow(gtk.Window):
         self.plottree.expand_row((page_num,), True)
 
     def event_table_activated(self, widget, table):
-        colnames = table.datasource.getcolumnnames(table.sourcepath)
+        colnames = table.datasource.get_columnnames(table.sourcepath)
         sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
         source = self.datamodel[widget.get_cursor()[0][0:1]][2]
         

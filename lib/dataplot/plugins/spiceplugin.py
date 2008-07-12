@@ -53,16 +53,16 @@ class SpicePlugin(datasource.DataSource):
                 return data_vector.get_data()
         return None
 
-    def getinfo(self):
+    def get_info(self):
         return "Sourcename: " + self.name \
                + "\nFilename: " + self.filename
         
-    def getcolumnnames(self, path):
+    def get_columnnames(self, path):
         vectors = [self.tabledict[tuple(path)].get_scalevector()]
         vectors.extend(self.tabledict[tuple(path)].get_datavectors())
 
         names = [ v.name for v in vectors ]
         return names
             
-    def gettableinfo(self, path):
-        return "Colnames: " + " ".join(self.getcolumnnames(path)) + "\n"
+    def get_tableinfo(self, path):
+        return "Colnames: " + " ".join(self.get_columnnames(path)) + "\n"

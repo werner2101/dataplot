@@ -74,7 +74,7 @@ class DataTree(gtk.TreeView):
         """
         m = treeview.get_model()
         path = treeview.get_cursor()[0]
-        self.emit('info-message', m[path][2].getinfo())
+        self.emit('info-message', m[path][2].get_info())
 
     def event_row_activated(self, treeview, path, column):
         """

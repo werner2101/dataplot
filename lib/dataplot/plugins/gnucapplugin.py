@@ -56,14 +56,14 @@ class GnucapPlugin(datasource.DataSource):
     def get_data(self, path, slicer):
         return self.table[slicer]
 
-    def getcolumnnames(self, path):
+    def get_columnnames(self, path):
         return self.colnames
 
-    def getinfo(self):
+    def get_info(self):
         return "Sourcename: " + self.name \
                + "\nFilename: " + self.filename
 
-    def gettableinfo(self, path):
-        return "Colnames: " + " ".join(self.getcolumnnames([])) \
+    def get_tableinfo(self, path):
+        return "Colnames: " + " ".join(self.get_columnnames([])) \
                + "\nRows: %i " % len(self.table[self.colnames[0]])
 

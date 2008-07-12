@@ -22,28 +22,83 @@ import numpy
 
 
 class DataSource(gobject.GObject):
-
+    """
+    DataSource is the base class of all data plugins
+    A datasource has to implement different functions to act as a DataSource
+    Plugin.
+    """
     def __init__(self):
+        """
+        Init the GObject base class of the DataSource class.
+        """
         gobject.GObject.__init__(self)
 
-    def getdata(self, path):
-        print "getdata not implemented in that plugin: ", str(path)
+    def load(self):
+        """
+        The load function returns a list of representations for all nodes
+        below the DataSource parent node.
+        The list items are tuples with the content
+          * parent node tuple, (where an empty tuple refers to no parent)
+          * DataNode (describing the data type)
+        Example:
+          [((), DataNode('abc', 'table', [path], self)),
+           ((0,), DataNode( ...
+           ((0,0), DataNode( ...
+           ((0,1), DataNode( ...
+        """
+        print "ERROR: load function not implemented in DataSource plugin [%s]" % str(self)
+        return []
 
-    def getinfo(self):
-        print "getinfo not implemented in that DataSource plugin"
+    def get_info(self):
+        """
+        get_info should return an information string describing the DataSource.
+        """
+        w = "WARNING: get_info() not implemented in that DataSource plugin [%s]" % str(self)
+        print w
+        return w
+
+    def get_data(self, path, slicer=None):
+        """
+        get_data selects data form the DataSource.
+        The path points to the data array or the data table.
+        If the data is a table the slicer is the columnname.
+        Note: The slicer is currently not used for numpy arrays.
+        returns a numpy array (either a column from a table or the data itself)
+        """
+        print "ERROR: get_data not implemented in that DataSource plugin [%s] " % str(self)
+        return None
+
+    def get_shape(self, path):
+        """
+        This function is required to get the shape of the multidimensional numpy array
+        located at path. The shape is a tuple.
+        This function is only required if the DataSource uses numpy arrays as data representation.
+        """
+        print "ERROR: get_shape not implemented in that DataSource plugin [%s] " % str(self)
+        return None
+
+    def get_tableinfo(self, path):
+        """
+        This function returns a info string about the table at the location path.
+        This function is only required if the DataSource uses tables as data representation.
+        """
+        w = "WARNING: get_info() not implemented in that DataSource plugin [%s]" % str(self)
+        print w
+        return w
+
+    def get_columnnames(self, path):
+        """
+        This function returns a list of column names of the table at the location path.
+        This function is only required if the DataSource uses tables as data representation.
+        """
+        print "ERROR: get_columnnames not implemented in that DataSource plugin [%s] " % str(self)
+        return []
 
 gobject.type_register( DataSource )
 
 
-
-
 class DataNode(gobject.GObject):
 
-    name = ""
-    datatype = None
-    sourcepath = None
-    datasource = None
-    
     def __init__(self, name, datatype, path, source):
         gobject.GObject.__init__(self)
         self.name = name
@@ -52,22 +107,22 @@ class DataNode(gobject.GObject):
         self.datasource = source
 
     def getdata(self):
-        self.datasource.getdata(self.sourcepath)
+        self.datasource.get_data(self.sourcepath)
 
     def getname(self):
         return self.name
 
-    def getinfo(self):
-        sourceinfo = self.datasource.getinfo()
+    def get_info(self):
+        sourceinfo = self.datasource.get_info()
         obj_info = "\nPath: " + str(self.sourcepath) \
                    + "\nName: " + self.name + "\nType: " + self.datatype
         data_info = ""
         if self.datatype == "table":
-            data_info = "\nTableInfo:\n" + self.datasource.gettableinfo(self.sourcepath)
+            data_info = "\nTableInfo:\n" + self.datasource.get_tableinfo(self.sourcepath)
         return sourceinfo + obj_info + data_info
 
     def gettype(self):
         return self.datatype
-    
+
 
 gobject.type_register( DataNode )
