@@ -98,7 +98,9 @@ gobject.type_register( DataSource )
 
 
 class DataNode(gobject.GObject):
-
+    """
+    DataNode represents a single data or folder element of the data tree.
+    """
     def __init__(self, name, datatype, path, source):
         gobject.GObject.__init__(self)
         self.name = name
@@ -106,13 +108,24 @@ class DataNode(gobject.GObject):
         self.sourcepath = path
         self.datasource = source
 
-    def getdata(self):
+    def get_data(self):
+        """
+        gets the data from the source that is represented by this
+        DataNode
+        """
         self.datasource.get_data(self.sourcepath)
 
-    def getname(self):
+    def get_name(self):
+        """
+        returns the name of this DataNode
+        """
         return self.name
 
     def get_info(self):
+        """
+        returns some more info about this DataNode and the data that the node
+        represents
+        """
         sourceinfo = self.datasource.get_info()
         obj_info = "\nPath: " + str(self.sourcepath) \
                    + "\nName: " + self.name + "\nType: " + self.datatype
@@ -121,7 +134,10 @@ class DataNode(gobject.GObject):
             data_info = "\nTableInfo:\n" + self.datasource.get_tableinfo(self.sourcepath)
         return sourceinfo + obj_info + data_info
 
-    def gettype(self):
+    def get_type(self):
+        """
+        return the datatype of this DataNode
+        """
         return self.datatype
 
 

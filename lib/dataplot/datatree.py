@@ -84,9 +84,9 @@ class DataTree(gtk.TreeView):
         """
         m = treeview.get_model()
         node = m[path][2]
-        if node.gettype() == "table":
+        if node.get_type() == "table":
             self.emit('table-activated', node)
-        elif node.gettype() in ["array2d", "array3d"]:
+        elif node.get_type() in ["array2d", "array3d"]:
             self.emit('array-activated', node)
 
         

@@ -537,8 +537,8 @@ class MainWindow(gtk.Window):
 
         for (path, obj) in datasource.load():
             mm.set(mm.append(mm.get_iter(parent + tuple(path))),
-                   0, self.datatree.icons[obj.gettype()],
-                   1, obj.getname(),
+                   0, self.datatree.icons[obj.get_type()],
+                   1, obj.get_name(),
                    2, obj)
         return datasource
 
