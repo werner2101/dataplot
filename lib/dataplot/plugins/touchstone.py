@@ -121,7 +121,7 @@ class touchstone():
         return "%s %s %s r %s" %(frequency, self.parameter,
                                  format, self.resistance)
 
-    def get_names(self, format="ri"):
+    def get_sparameter_names(self, format="ri"):
         names = ['frequency']
         if format == 'orig':
             format = self.format
@@ -137,8 +137,7 @@ class touchstone():
         get the data of the 
         """
         ret = {}
-        ret.append(('frequency', self.sparameters[:,0]))
-        for i,n in enumerate(self.get_names(format=format)):
+        for i,n in enumerate(self.get_sparameter_names(format=format)):
             ret[n] = self.sparameters[:,i]
         return ret
 
@@ -159,19 +158,23 @@ class touchstone():
 if __name__ == "__main__":
     import sys
     import pylab
-    
-    t = touchstone(sys.argv[1])
-    d = dict(t.get_data())
-    f = d.pop('frequency')
+
+    filename = sys.argv[1]
+    t = touchstone(filename)
+    n = t.get_sparameter_names(format='orig')
+    d = t.get_sparameter_data(format='orig')
+    f = d['frequency']
     pylab.subplot(211)
-    for s in ['S11_1', 'S12_1', 'S21_1', 'S22_1']:
-        pylab.plot(f, d[s], label=s)
+    for i in range(1,len(n),2):
+        pylab.plot(f, d[n[i]], label=n[i])
     pylab.legend(loc='best')
+    pylab.title('Touchstone S-parameter, File=[%s]'%filename)
     pylab.grid()
     pylab.subplot(212)
-    for s in ['S11_2', 'S12_2', 'S21_2', 'S22_2']:
-        pylab.plot(f, d[s], label=s)
+    for i in range(2,len(n),2):
+        pylab.plot(f, d[n[i]], label=n[i])
     pylab.legend(loc='best')
+    pylab.xlabel('frequency [%s]' %(t.frequency_unit))
     pylab.grid()
     pylab.show()
 
