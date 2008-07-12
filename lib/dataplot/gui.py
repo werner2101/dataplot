@@ -24,7 +24,7 @@ import xml.dom.minidom
 
 import datatree, plottree, dialogs
 
-import testplugin, gnucapplugin, spiceplugin
+import testplugin, gnucapplugin, spiceplugin, touchstoneplugin
 
 
 class MainWindow(gtk.Window):
@@ -73,6 +73,7 @@ class MainWindow(gtk.Window):
         self.plugins["test"] = testplugin.TestPlugin
         self.plugins["gnucap"] = gnucapplugin.GnucapPlugin
         self.plugins["spice"] = spiceplugin.SpicePlugin
+        self.plugins["touchstone"] = touchstoneplugin.TouchstonePlugin
 
 
     def init_gui(self):
@@ -439,8 +440,8 @@ class MainWindow(gtk.Window):
         open(filename, "w").write(dom.toprettyxml("  "))
 
     def file_load(self, filename):
-        self.delete_plot(self)
-        self.delete_data(self)
+        self.delete_plot()
+        self.delete_data()
         self.filename = filename
         self.filechanged = False
         source_dict = {}
@@ -501,7 +502,7 @@ class MainWindow(gtk.Window):
         If there's no plot remaining, create an empty plot.
         """
 
-        if not nth:
+        if nth:
             deletelist = [ nth ]
         else:
             # create a delete list in reversed order
@@ -517,7 +518,7 @@ class MainWindow(gtk.Window):
         Remove the nth data source from the gui. If the number of the data source
         is None, all plots are removed.
         """
-        if not nth:
+        if nth:
             deletelist = [ nth ]
         else:
             # create a delete list in reversed order

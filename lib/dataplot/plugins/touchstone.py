@@ -25,10 +25,8 @@ class touchstone():
     http://www.eda-stds.org/ibis/adhoc/interconnect/touchstone_spec2_draft.pdf
     """
     def __init__(self,filename):
-        self.orig_frequency = None
-        self.frequency = None
-        self.orig_sparameters = None
         self.sparameters = None
+        self.noise = None
         self.filename = filename
         self.version = '1.0'
         self.reference = None
@@ -100,31 +98,82 @@ class touchstone():
             ## the first frequency value that is smaller than the last one is the
             ## indicator for the start of the noise section
             ## each set of the s-parameter section is 9 values long
-            f = values[::9]
-            sign = numpy.sign(numpy.diff(f))
-            pos = numpy.where(sign == -1)
+            pos = numpy.where(numpy.sign(numpy.diff(values[::9])) == -1)
             if len(pos) != 0:
                 ## we have noise data in the values
-                pos = pos[0][0] + 1
+                pos = pos[0][0] + 1   # add 1 because diff reduced it by 1
                 noise_values = values[pos*9:]
                 values = values[:pos*9]
-                noise_values = noise_values.reshape((-1,5))
+                self.noise_values = noise_values.reshape((-1,5))
+
+        ## reshape the values to match the rank
+        self.sparameters = values.reshape((-1, 1 + 2*self.rank**2))
+
+        self.frequency_mult = {'hz':1.0, 'khz':1e3,
+                               'mhz':1e6, 'ghz':1e9}.get(self.frequency_unit)
+
+    def get_format(self, format="ri"):
+        if format == 'orig':
+            frequency = self.frequency_unit
+            format = self.format
+        else:
+            frequency = 'hz'
+        return "%s %s %s r %s" %(frequency, self.parameter,
+                                 format, self.resistance)
+
+    def get_names(self, format="ri"):
+        names = ['frequency']
+        if format == 'orig':
+            format = self.format
+        ext1, ext2 = {'ri':('R','I'),'ma':('M','A'), 'db':('DB','A')}.get(format)
+        for r1 in xrange(self.rank):
+            for r2 in xrange(self.rank):
+                names.append("S%i%i%s"%(r1+1,r2+1,ext1))
+                names.append("S%i%i%s"%(r1+1,r2+1,ext2))
+        return names
+    
+    def get_sparameter_data(self, format='ri', angle='degree', unwrapped=False):
+        """
+        get the data of the 
+        """
+        ret = {}
+        ret.append(('frequency', self.sparameters[:,0]))
+        for i,n in enumerate(self.get_names(format=format)):
+            ret[n] = self.sparameters[:,i]
+        return ret
+
+    def get_noise_names(self):
+        TBD = 1
+        
+        
+    def get_noise_data(self):
+        TBD = 1
+"""
                 self.noise_frequency = noise_values[:,0]
                 self.noise_minimum_figure = noise_values[:,1]
                 self.noise_source_reflection = noise_values[:,2]
                 self.noise_source_phase = noise_values[:,3]
                 self.noise_normalized_resistance = noise_values[:,4]
-
-        ## reshape the values to match the rank
-        values = values.reshape((-1, 1 + 2*self.rank**2))
-
+"""
 
 if __name__ == "__main__":
     import sys
     import pylab
     
     t = touchstone(sys.argv[1])
-    print t
+    d = dict(t.get_data())
+    f = d.pop('frequency')
+    pylab.subplot(211)
+    for s in ['S11_1', 'S12_1', 'S21_1', 'S22_1']:
+        pylab.plot(f, d[s], label=s)
+    pylab.legend(loc='best')
+    pylab.grid()
+    pylab.subplot(212)
+    for s in ['S11_2', 'S12_2', 'S21_2', 'S22_2']:
+        pylab.plot(f, d[s], label=s)
+    pylab.legend(loc='best')
+    pylab.grid()
+    pylab.show()
 
     
             
