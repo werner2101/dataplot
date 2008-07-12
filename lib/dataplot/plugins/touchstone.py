@@ -132,13 +132,46 @@ class touchstone():
                 names.append("S%i%i%s"%(r1+1,r2+1,ext2))
         return names
     
-    def get_sparameter_data(self, format='ri', angle='degree', unwrapped=False):
+    def get_sparameter_data(self, format='ri'):
         """
-        get the data of the 
+        get the data of the sparameter with the given format.
+        supported formats are:
+          orig:  unmodified s-parameter data
+          ri:    data in real/imaginary
+          ma:    data in magnitude and angle (degree)
+          db:    data in log magnitute and angle (degree)
         """
         ret = {}
+        if format == 'orig':
+            values = self.sparameters
+        else:
+            values = self.sparameters.copy()
+            ## use frequency in hz unit
+            values[:,0] = values[:,0]*self.frequency_mult
+            if (self.format == 'db') and (format == 'ma'):
+                values[:,1::2] = 10**(values[:,1::2]/20.0)
+            elif (self.format == 'db') and (format == 'ri'):
+                v_complex = ((10**values[:,1::2]/20.0) 
+                             * numpy.exp(1j*numpy.pi/360 * values[:,2::2]))
+                values[:,1::2] = numpy.real(v_complex)
+                values[:,2::2] = numpy.imag(v_complex)
+            elif (self.format == 'ma') and (format == 'db'):
+                values[:,1::2] = 20*numpy.log10(values[:,1::2])
+            elif (self.format == 'ma') and (format == 'ri'):
+                v_complex = (values[:,1::2] * numpy.exp(1j*numpy.pi/360 * values[:,2::2]))
+                values[:,1::2] = numpy.real(v_complex)
+                values[:,2::2] = numpy.imag(v_complex)
+            elif (self.format == 'ri') and (format == 'ma'):
+                v_complex = numpy.absolute(values[:,1::2] + 1j* self.sparameters[:,2::2])
+                values[:,1::2] = numpy.absolute(v_complex)
+                values[:,2::2] = numpy.angle(v_complex)*(360/numpy.pi)
+            elif (self.format == 'ri') and (format == 'db'):
+                v_complex = numpy.absolute(values[:,1::2] + 1j* self.sparameters[:,2::2])
+                values[:,1::2] = 20*numpy.log10(numpy.absolute(v_complex))
+                values[:,2::2] = numpy.angle(v_complex)*(360/numpy.pi)
+        
         for i,n in enumerate(self.get_sparameter_names(format=format)):
-            ret[n] = self.sparameters[:,i]
+            ret[n] = values[:,i]
         return ret
 
     def get_noise_names(self):
@@ -147,13 +180,13 @@ class touchstone():
         
     def get_noise_data(self):
         TBD = 1
-"""
-                self.noise_frequency = noise_values[:,0]
-                self.noise_minimum_figure = noise_values[:,1]
-                self.noise_source_reflection = noise_values[:,2]
-                self.noise_source_phase = noise_values[:,3]
-                self.noise_normalized_resistance = noise_values[:,4]
-"""
+
+        noise_frequency = noise_values[:,0]
+        noise_minimum_figure = noise_values[:,1]
+        noise_source_reflection = noise_values[:,2]
+        noise_source_phase = noise_values[:,3]
+        noise_normalized_resistance = noise_values[:,4]
+
 
 if __name__ == "__main__":
     import sys
