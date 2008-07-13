@@ -58,16 +58,9 @@ class DataTree(gtk.TreeView):
         self.set_property("headers-visible", False)
         self.set_model(datamodel)
 
-        self.load_icons()
-
         ## SETUP signals
         self.connect("cursor-changed", self.event_cursor_changed)
         self.connect("row-activated", self.event_row_activated)
-
-    def load_icons(self):
-        self.icons = {}
-        for name,filename in bitmaps:
-            self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
 
     def event_cursor_changed(self, treeview):
         """
@@ -91,4 +84,47 @@ class DataTree(gtk.TreeView):
         elif node.get_type() in ["array2d", "array3d"]:
             self.emit('array-activated', node)
 
-        
+
+class DataModel(gtk.TreeStore):
+    """
+    The PlotModel class contains the model part of the Plot Tree.
+    """
+    def __init__(self):
+        gtk.TreeStore.__init__(self,
+                               gtk.gdk.Pixbuf,
+                               gobject.TYPE_STRING,
+                               gobject.TYPE_OBJECT)
+
+        self.icons = {}
+        for name,filename in bitmaps:
+            self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
+
+    
+    def add_node(self, parentpath, nodeobject):
+        if not parentpath:
+            i_new = self.append(None)
+        else:
+            i = self.get_iter(parentpath)
+            i_new = self.append(i)
+        self.set(i_new,
+                 0, self.icons[nodeobject.get_type()],
+                 1, nodeobject.get_name(),
+                 2, nodeobject)
+        return self.get_path(i_new)
+
+    def create_name(self, name):
+        """
+        We need uniq names of our sources. If a name is already in use,
+        attach a (i) suffix to the given name
+        """
+        d = dict([ (row[1],0) for row in self ])
+        if d.has_key(name):
+            i = 2
+            while (1):
+                new_name = name + "(%i)"%i
+                if d.has_key(new_name):
+                    i += 1
+                else:
+                    return new_name
+        else:
+            return name

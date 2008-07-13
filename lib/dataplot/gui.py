@@ -64,11 +64,7 @@ class MainWindow(gtk.Window):
     def init_data(self):
         self.filename = None
         self.filechanged = False
-
-        self.datamodel = gtk.TreeStore(gtk.gdk.Pixbuf,
-                                       gobject.TYPE_STRING,
-                                       gobject.TYPE_OBJECT)
-
+        self.datamodel = datatree.DataModel()
         self.plotmodel = plottree.PlotModel()
 
     def init_plugins(self):
@@ -227,8 +223,9 @@ class MainWindow(gtk.Window):
         
     #################### events
     def event_file_new(self, menuitem):
-        self.delete_plot(self)
-        self.delete_data(self)
+        self.delete_plot()
+        self.delete_data()
+        self.new_plot("newplot")
 
         self.filename = None
         self.filenchanged = True
@@ -281,8 +278,8 @@ class MainWindow(gtk.Window):
             filename = dialog.get_filename()
             basename = os.path.basename(filename)
             # TODO: guess plugin if filetype is None
-            # TODO: what shall we do with duplicate source names
-            self.data_load(filename, basename, self.plugins[filetype])
+            name = self.datamodel.create_name(basename)
+            self.data_load(filename, name, self.plugins[filetype])
 
         dialog.destroy()
 
@@ -510,7 +507,7 @@ class MainWindow(gtk.Window):
         else:
             # create a delete list in reversed order
             deletelist = range(self.plotnotebook.get_n_pages() - 1, -1, -1)
-        
+
         for n in deletelist:
             self.plotnotebook.remove_page(n)
             self.plotmodel.remove(self.plotmodel.get_iter((n,)))
@@ -532,17 +529,14 @@ class MainWindow(gtk.Window):
 
 
     def data_load(self, filename, name, plugin):
-        mm = self.datamodel
-        ii = mm.append(None)
-        parent = mm.get_path(ii)
         datasource = plugin(filename)
-        mm.set(ii, 0, self.datatree.icons["file"], 1, name, 2, datasource)
+
+        it = self.datamodel.append(None)
+        sourcepath = self.datamodel.get_path(it)
+        self.datamodel.set(it, 0, self.datamodel.icons["file"], 1, name, 2, datasource)
 
         for (path, obj) in datasource.load():
-            mm.set(mm.append(mm.get_iter(parent + tuple(path))),
-                   0, self.datatree.icons[obj.get_type()],
-                   1, obj.get_name(),
-                   2, obj)
+            self.datamodel.add_node(sourcepath + tuple(path), obj)
         return datasource
 
 
