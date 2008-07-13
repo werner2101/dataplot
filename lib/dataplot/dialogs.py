@@ -21,7 +21,10 @@ import gtk, gobject
 
 
 class TableDataSelection(gtk.Dialog):
-
+    """
+    Dialog to select single columns from a table data source.
+    The data columns can be used as x or y-data elements.
+    """
     returns = {}
 
     def __init__(self, parent, columnnames):
@@ -87,9 +90,10 @@ class TableDataSelection(gtk.Dialog):
 
 
 class ArrayDataSelection(gtk.Dialog):
-
-    returns = {}
-
+    """
+    Dialog to select single vector from a multidimentional array.
+    The vectors can be used as x or y-data elements.
+    """
     def __init__(self, parent, shape):
         gtk.Dialog.__init__(self, "Array Selection", parent,
                             gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -202,9 +206,10 @@ class ArrayDataSelection(gtk.Dialog):
 
 
 class SingleplotOptions(gtk.Dialog):
-
-    returns = {}
-
+    """
+    Class for setting the plot options of a single plot:
+        title, scale, ...
+    """
     def __init__(self, parent, properties):
         gtk.Dialog.__init__(self, "Subplot Options", parent,
                             gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,

@@ -29,7 +29,9 @@ bitmaps = [["file", "data/bitmaps/data_file.png"],
            ["array3d", "data/bitmaps/data_array3d.png"]]
 
 class DataTree(gtk.TreeView):
-
+    """
+    The DataTree class contains the view part of all data sources.
+    """
     __gsignals__ = { 'info-message':
                      ( gobject.SIGNAL_NO_RECURSE,
                        gobject.TYPE_NONE,

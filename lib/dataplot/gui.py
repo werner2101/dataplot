@@ -28,8 +28,13 @@ import testplugin, gnucapplugin, spiceplugin, touchstoneplugin
 
 
 class MainWindow(gtk.Window):
-
+    """
+    This is the MainWindow of the program
+    """
     def __init__(self, args=None):
+        """
+        Init the base class gtk.Window, all internal data stru
+        """
         gtk.Window.__init__(self)
 
         self.init_data()

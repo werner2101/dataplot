@@ -32,7 +32,10 @@ bitmaps = [["notebook", "data/bitmaps/plot_notebook.png"],
            ["math", "data/bitmaps/plot_math.png"]]
 
 class PlotTree(gtk.TreeView):
-
+    """
+    The PlotTree class contains the view part of the all data that
+    is required to represent the plots.
+    """
 
     __gsignals__ = { 'info-message':
                      ( gobject.SIGNAL_NO_RECURSE,
