@@ -69,9 +69,7 @@ class MainWindow(gtk.Window):
                                        gobject.TYPE_STRING,
                                        gobject.TYPE_OBJECT)
 
-        self.plotmodel = gtk.TreeStore(gtk.gdk.Pixbuf,
-                                       gobject.TYPE_STRING,
-                                       gobject.TYPE_OBJECT)
+        self.plotmodel = plottree.PlotModel()
 
     def init_plugins(self):
         self.plugins = {}
@@ -320,13 +318,13 @@ class MainWindow(gtk.Window):
                 xnode.set_data(source, sourcename, table.sourcepath, xname)
             else:
                 xnode = plottree.DataNode('generic', "xaxis")
-            xpath = self.plottree.add_node((nthplot,0), xnode)
+            xpath = self.plotmodel.add_node((nthplot,0), xnode)
 
             for yname in data["y_columns"]:
                 ynode = plottree.DataNode(yname, "yaxis")
                 ynode.set_data(source, sourcename, table.sourcepath, yname)
-                ypath = self.plottree.add_node(xpath, ynode)
-                self.plottree.add_line(ypath)
+                ypath = self.plotmodel.add_node(xpath, ynode)
+                self.plotmodel.add_line(ypath)
 
             self.plottree.expand_row((nthplot,), True)
             self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
@@ -349,13 +347,13 @@ class MainWindow(gtk.Window):
                 xnode.set_data(source, sourcename, arraynode.sourcepath, xname)
             else:
                 xnode = plottree.DataNode('generic', "xaxis")
-            xpath = self.plottree.add_node((nthplot,0), xnode)
+            xpath = self.plotmodel.add_node((nthplot,0), xnode)
 
             for yname in data["y_columns"]:
                 ynode = plottree.DataNode(arraynode.name + yname, "yaxis")
                 ynode.set_data(source, sourcename, arraynode.sourcepath, yname)
-                ypath = self.plottree.add_node(xpath, ynode)
-                self.plottree.add_line(ypath)
+                ypath = self.plotmodel.add_node(xpath, ynode)
+                self.plotmodel.add_line(ypath)
 
             self.plottree.expand_row((nthplot,), True)
             self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
@@ -474,7 +472,7 @@ class MainWindow(gtk.Window):
                                        xsource.getAttribute("source"),
                                        xsource.getAttribute("path").split(" "),
                                        xsource.getAttribute("slicer"))
-                    xpath = self.plottree.add_node((ip,isp), xnode)
+                    xpath = self.plotmodel.add_node((ip,isp), xnode)
                     for iy, yaxis in enumerate(xaxis.getElementsByTagName("yaxis")):
                         ynode = plottree.DataNode(yaxis.getAttribute("name"), "yaxis")
                         ysource = yaxis.getElementsByTagName("datasource")[0]
@@ -482,8 +480,8 @@ class MainWindow(gtk.Window):
                                        ysource.getAttribute("source"),
                                        ysource.getAttribute("path").split(" "),
                                        ysource.getAttribute("slicer"))
-                        ypath = self.plottree.add_node((ip,isp,ix), ynode)
-                        self.plottree.add_line(ypath)
+                        ypath = self.plotmodel.add_node((ip,isp,ix), ynode)
+                        self.plotmodel.add_line(ypath)
 
                 properties = subplot.getElementsByTagName("properties")[0]
                 self.plotmodel[ip,isp][2].set_properties(dict(properties.attributes.items()))
@@ -492,9 +490,9 @@ class MainWindow(gtk.Window):
 
     def new_plot(self, name):
         plot = plottree.PlotNode(name)
-        path = self.plottree.add_node(None, plot)
+        path = self.plotmodel.add_node(None, plot)
         subplot = plottree.SubplotNode(name, plot.figure)
-        path = self.plottree.add_node(path, subplot)
+        path = self.plotmodel.add_node(path, subplot)
         self.plotnotebook.append_page(plot.plot, gtk.Label(name))
         plot.plot.show()
         self.plotnotebook.set_current_page(-1)
@@ -521,7 +519,7 @@ class MainWindow(gtk.Window):
     def delete_data(self, nth = None):
         """
         Remove the nth data source from the gui. If the number of the data source
-        is None, all plots are removed.
+        is None, all data sources are removed.
         """
         if nth:
             deletelist = [ nth ]

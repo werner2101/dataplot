@@ -56,42 +56,12 @@ class PlotTree(gtk.TreeView):
         self.set_property("enable-tree-lines", True)
         self.set_property("headers-visible", False)
 
-        self.load_icons()
         self.set_model(plotmodel)
         
         ## SETUP signals
         self.connect("cursor-changed", self.event_cursor_changed)
         self.connect("row-activated", self.event_row_activated)
         
-
-    def load_icons(self):
-        self.icons = {}
-        for name,filename in bitmaps:
-            self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
-
-    def add_node(self, parentpath, nodeobject):
-        m = self.get_model()
-        if not parentpath:
-            i_new = m.append(None)
-        else:
-            i = m.get_iter(parentpath)
-            i_new = m.append(i)
-        m.set(i_new, 0, self.icons[nodeobject.nodetype], 1, nodeobject.name, 2, nodeobject)
-        return m.get_path(i_new)
-
-    def add_line(self, ypath):
-        m = self.get_model()
-        ynode = m.get_value(m.get_iter(ypath), 2)
-        xnode = m.get_value(m.get_iter(ypath[0:3]),2)
-        subplotnode = m.get_value(m.get_iter(ypath[0:2]),2)
-
-        yv = ynode.get_vector()
-        xv = xnode.get_vector()
-        if xv == None:
-            xv = numpy.arange(len(yv))
-
-        axes = subplotnode.axes
-        ynode.line = axes.plot(xv, yv, label=ynode.name)
 
     def event_cursor_changed(self, treeview):
         """
@@ -108,33 +78,43 @@ class PlotTree(gtk.TreeView):
         self.emit('plotnode-activated', node)
 
 
-    def test(self):
-        plot = PlotNode("plot1")
-        path = self.add_node(None, plot)
+class PlotModel(gtk.TreeStore):
+    """
+    The PlotModel class contains the model part of the Plot Tree.
+    """
+    def __init__(self):
+        gtk.TreeStore.__init__(self,
+                               gtk.gdk.Pixbuf,
+                               gobject.TYPE_STRING,
+                               gobject.TYPE_OBJECT)
 
-        plot = PlotNode("plot2")
-        path = self.add_node(None, plot)
+        self.icons = {}
+        for name,filename in bitmaps:
+            self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
 
-        subplot = SubplotNode("subplot1")
-        spath1 = self.add_node(path, subplot)
+    
+    def add_node(self, parentpath, nodeobject):
+        if not parentpath:
+            i_new = self.append(None)
+        else:
+            i = self.get_iter(parentpath)
+            i_new = self.append(i)
+        self.set(i_new, 0, self.icons[nodeobject.nodetype], 1, nodeobject.name, 2, nodeobject)
+        return self.get_path(i_new)
 
-        xaxis = DataNode("x-axis","xaxis")
-        xpath = self.add_node(spath1, xaxis)
+    def add_line(self, ypath):
+        ynode = self.get_value(self.get_iter(ypath), 2)
+        xnode = self.get_value(self.get_iter(ypath[0:3]),2)
+        subplotnode = self.get_value(self.get_iter(ypath[0:2]),2)
 
-        yaxis = DataNode("y-axis1", "yaxis")
-        self.add_node(xpath, yaxis)
-        yaxis = DataNode("y-axis2", "yaxis")
-        self.add_node(xpath, yaxis)
-        
-        subplot = SubplotNode("subplot2")
-        spath2 = self.add_node(path, subplot)
+        yv = ynode.get_vector()
+        xv = xnode.get_vector()
+        if xv == None:
+            xv = numpy.arange(len(yv))
 
-        xaxis = DataNode("x-axis","xaxis")
-        xpath = self.add_node(spath2, xaxis)
-
-        yaxis = DataNode("y-axis1", "yaxis")
-        self.add_node(xpath, yaxis)
-        
+        axes = subplotnode.axes
+        ynode.line = axes.plot(xv, yv, label=ynode.name)
+                
 
 class PlotNode(gobject.GObject):
 
