@@ -24,7 +24,7 @@ import xml.dom.minidom
 
 import datatree, plottree, dialogs
 
-import testplugin, gnucapplugin, spiceplugin, touchstoneplugin
+import testplugin, gnucapplugin, spiceplugin, touchstoneplugin, hdf5plugin
 
 
 class MainWindow(gtk.Window):
@@ -73,6 +73,7 @@ class MainWindow(gtk.Window):
         self.plugins["gnucap"] = gnucapplugin.GnucapPlugin
         self.plugins["spice"] = spiceplugin.SpicePlugin
         self.plugins["touchstone"] = touchstoneplugin.TouchstonePlugin
+        self.plugins["hdf5"] = hdf5plugin.Hdf5Plugin
 
 
     def init_gui(self):

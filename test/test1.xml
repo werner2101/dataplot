@@ -6,6 +6,7 @@
     <datasource filename="test/data/saturation_voltages_t0.data" name="saturation_voltages_t0.data" plugin="gnucap"/>
     <datasource filename="test/data/touchstone_1P3V51M2.S2P" name="touchstone_1P3V51M2.S2P" plugin="touchstone"/>
     <datasource filename="test/data/complicated_binary.raw" name="complicated_binary.raw" plugin="spice"/>
+    <datasource filename="test/data/out.hdf5" name="out.hdf5" plugin="hdf5"/>
   </datasources>
   <plotdata>
     <plot name="plot1">
