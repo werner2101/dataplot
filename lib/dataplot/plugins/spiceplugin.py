@@ -43,17 +43,17 @@ class SpicePlugin(datasource.DataSource):
         ret = []
         for i, p in enumerate(self.plotlist):
             name = "plot%i"%(i)
-            path = (name,)
+            path = '/'+ name
             self.tabledict[path] = p
             node = datasource.DataNode(name, "table", path, self)
             ret.append(((), node))
         return ret
                 
     def get_data(self, path, slicer):
-        scale_vector = self.tabledict[tuple(path)].get_scalevector()
+        scale_vector = self.tabledict[path].get_scalevector()
         if slicer == scale_vector.name:
             return scale_vector.get_data()
-        for data_vector in self.tabledict[tuple(path)].get_datavectors():
+        for data_vector in self.tabledict[path].get_datavectors():
             if slicer == data_vector.name:
                 return data_vector.get_data()
         return None
@@ -63,8 +63,8 @@ class SpicePlugin(datasource.DataSource):
                + "\nFilename: " + self.filename
         
     def get_columnnames(self, path):
-        vectors = [self.tabledict[tuple(path)].get_scalevector()]
-        vectors.extend(self.tabledict[tuple(path)].get_datavectors())
+        vectors = [self.tabledict[path].get_scalevector()]
+        vectors.extend(self.tabledict[path].get_datavectors())
 
         names = [ v.name for v in vectors ]
         return names

@@ -15,19 +15,19 @@
         <xaxis name="generic">
           <datasource operator="" path="" slicer="" source=""/>
           <yaxis name="test1">
-            <datasource operator="" path="root table1" slicer="test1" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test1" source="abc"/>
           </yaxis>
           <yaxis name="test0">
-            <datasource operator="" path="root table1" slicer="test0" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test0" source="abc"/>
           </yaxis>
           <yaxis name="test3">
-            <datasource operator="" path="root table1" slicer="test3" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test3" source="abc"/>
           </yaxis>
           <yaxis name="test2">
-            <datasource operator="" path="root table1" slicer="test2" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test2" source="abc"/>
           </yaxis>
           <yaxis name="test5">
-            <datasource operator="" path="root table1" slicer="test5" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test5" source="abc"/>
           </yaxis>
         </xaxis>
       </subplot>
@@ -36,30 +36,30 @@
       <subplot name="plot2">
         <properties grid="1" legend="0" title="" xlabel="" xlog="0" xmax="36.1481001984" xmin="-6.1481001984" ylabel="" ylog="0" ymax="1.20493667328" ymin="-0.20493667328"/>
         <xaxis name="test0">
-          <datasource operator="" path="root table1" slicer="test0" source="abc"/>
+          <datasource operator="" path="/root/table1" slicer="test0" source="abc"/>
           <yaxis name="test3">
-            <datasource operator="" path="root table1" slicer="test3" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test3" source="abc"/>
           </yaxis>
           <yaxis name="test2">
-            <datasource operator="" path="root table1" slicer="test2" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test2" source="abc"/>
           </yaxis>
           <yaxis name="test5">
-            <datasource operator="" path="root table1" slicer="test5" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test5" source="abc"/>
           </yaxis>
         </xaxis>
         <xaxis name="generic">
           <datasource operator="" path="" slicer="" source=""/>
           <yaxis name="test3">
-            <datasource operator="" path="root table1" slicer="test3" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test3" source="abc"/>
           </yaxis>
           <yaxis name="test2">
-            <datasource operator="" path="root table1" slicer="test2" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test2" source="abc"/>
           </yaxis>
           <yaxis name="test5">
-            <datasource operator="" path="root table1" slicer="test5" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test5" source="abc"/>
           </yaxis>
           <yaxis name="test4">
-            <datasource operator="" path="root table1" slicer="test4" source="abc"/>
+            <datasource operator="" path="/root/table1" slicer="test4" source="abc"/>
           </yaxis>
         </xaxis>
       </subplot>
@@ -68,12 +68,12 @@
       <subplot name="newplot">
         <properties grid="1" legend="0" title="" xlabel="" xlog="0" xmax="0.881675879629" xmin="-1.88167587963" ylabel="" ylog="0" ymax="352.670351852" ymin="-752.670351852"/>
         <xaxis name="I(V1)">
-          <datasource operator="" path="table" slicer="I(V1)" source="saturation_voltages_t0.data"/>
+          <datasource operator="" path="/table" slicer="I(V1)" source="saturation_voltages_t0.data"/>
           <yaxis name="V(in)">
-            <datasource operator="" path="table" slicer="V(in)" source="saturation_voltages_t0.data"/>
+            <datasource operator="" path="/table" slicer="V(in)" source="saturation_voltages_t0.data"/>
           </yaxis>
           <yaxis name="V(out)">
-            <datasource operator="" path="table" slicer="V(out)" source="saturation_voltages_t0.data"/>
+            <datasource operator="" path="/table" slicer="V(out)" source="saturation_voltages_t0.data"/>
           </yaxis>
         </xaxis>
       </subplot>
@@ -82,18 +82,18 @@
       <subplot name="newplot">
         <properties grid="1" legend="1" title="s-parameter" xlabel="frequency [GHz)" xlog="0" xmax="6.0" xmin="0.0" ylabel="magnitude" ylog="0" ymax="4.5" ymin="0.0"/>
         <xaxis name="frequency">
-          <datasource operator="" path="unmodified" slicer="frequency" source="touchstone_1P3V51M2.S2P"/>
+          <datasource operator="" path="/unmodified" slicer="frequency" source="touchstone_1P3V51M2.S2P"/>
           <yaxis name="S11M">
-            <datasource operator="" path="unmodified" slicer="S11M" source="touchstone_1P3V51M2.S2P"/>
+            <datasource operator="" path="/unmodified" slicer="S11M" source="touchstone_1P3V51M2.S2P"/>
           </yaxis>
           <yaxis name="S12M">
-            <datasource operator="" path="unmodified" slicer="S12M" source="touchstone_1P3V51M2.S2P"/>
+            <datasource operator="" path="/unmodified" slicer="S12M" source="touchstone_1P3V51M2.S2P"/>
           </yaxis>
           <yaxis name="S21M">
-            <datasource operator="" path="unmodified" slicer="S21M" source="touchstone_1P3V51M2.S2P"/>
+            <datasource operator="" path="/unmodified" slicer="S21M" source="touchstone_1P3V51M2.S2P"/>
           </yaxis>
           <yaxis name="S22M">
-            <datasource operator="" path="unmodified" slicer="S22M" source="touchstone_1P3V51M2.S2P"/>
+            <datasource operator="" path="/unmodified" slicer="S22M" source="touchstone_1P3V51M2.S2P"/>
           </yaxis>
         </xaxis>
       </subplot>
@@ -102,15 +102,15 @@
       <subplot name="newplot">
         <properties grid="1" legend="1" title="ngspice ac simulation" xlabel="frequency" xlog="1" xmax="1000000.0" xmin="10000.0" ylabel="" ylog="0" ymax="1.0" ymin="-0.2"/>
         <xaxis name="frequency">
-          <datasource operator="" path="plot0" slicer="frequency" source="complicated_binary.raw"/>
+          <datasource operator="" path="/plot0" slicer="frequency" source="complicated_binary.raw"/>
           <yaxis name="ac.v(n0)">
-            <datasource operator="" path="plot0" slicer="ac.v(n0)" source="complicated_binary.raw"/>
+            <datasource operator="" path="/plot0" slicer="ac.v(n0)" source="complicated_binary.raw"/>
           </yaxis>
           <yaxis name="ac.v(n1)">
-            <datasource operator="" path="plot0" slicer="ac.v(n1)" source="complicated_binary.raw"/>
+            <datasource operator="" path="/plot0" slicer="ac.v(n1)" source="complicated_binary.raw"/>
           </yaxis>
           <yaxis name="ac.v(n2)">
-            <datasource operator="" path="plot0" slicer="ac.v(n2)" source="complicated_binary.raw"/>
+            <datasource operator="" path="/plot0" slicer="ac.v(n2)" source="complicated_binary.raw"/>
           </yaxis>
         </xaxis>
       </subplot>
@@ -119,9 +119,9 @@
       <subplot name="newplot">
         <properties grid="1" legend="0" title="" xlabel="" xlog="0" xmax="1e-05" xmin="0.0" ylabel="" ylog="0" ymax="-0.3" ymin="-1.1"/>
         <xaxis name="time">
-          <datasource operator="" path="plot2" slicer="time" source="complicated_binary.raw"/>
+          <datasource operator="" path="/plot2" slicer="time" source="complicated_binary.raw"/>
           <yaxis name="tran.v(n1)">
-            <datasource operator="" path="plot2" slicer="tran.v(n1)" source="complicated_binary.raw"/>
+            <datasource operator="" path="/plot2" slicer="tran.v(n1)" source="complicated_binary.raw"/>
           </yaxis>
         </xaxis>
       </subplot>

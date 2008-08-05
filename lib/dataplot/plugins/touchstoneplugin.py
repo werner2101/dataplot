@@ -45,14 +45,14 @@ class TouchstonePlugin(datasource.DataSource):
              ('magnitude(db) angle', 'db'),
              ('real imaginary', 'ri')]
         for name, key in l:
-            path = (name,)
+            path = '/'+ name
             self.tabledict[path] = key
             node = datasource.DataNode(name, 'table', path, self)
             ret.append(((), node))
         return ret
                 
     def get_data(self, path, slicer):
-        data = self.touchstone.get_sparameter_data(format=self.tabledict[tuple(path)])
+        data = self.touchstone.get_sparameter_data(format=self.tabledict[path])
         return data.get(slicer, None)
 
     def get_info(self):
@@ -60,10 +60,10 @@ class TouchstonePlugin(datasource.DataSource):
                + "\nFilename: " + self.filename
         
     def get_columnnames(self, path):
-        names = self.touchstone.get_sparameter_names(self.tabledict[tuple(path)])
+        names = self.touchstone.get_sparameter_names(self.tabledict[path])
         return names
             
     def get_tableinfo(self, path):
-        format = self.touchstone.get_format(self.tabledict[tuple(path)])
+        format = self.touchstone.get_format(self.tabledict[path])
         colnames = " ".join(self.get_columnnames(path))
         return "Format: %s\nColnames: %s\n" %(format, colnames)

@@ -41,7 +41,7 @@ class DataSource(gobject.GObject):
           * parent node tuple, (where an empty tuple refers to no parent)
           * DataNode (describing the data type)
         Example:
-          [((), DataNode('abc', 'table', [path], self)),
+          [((), DataNode('abc', 'table', 'path', self)),
            ((0,), DataNode( ...
            ((0,0), DataNode( ...
            ((0,1), DataNode( ...
@@ -127,7 +127,7 @@ class DataNode(gobject.GObject):
         represents
         """
         sourceinfo = self.datasource.get_info()
-        obj_info = "\nPath: " + str(self.sourcepath) \
+        obj_info = "\nPath: " + self.sourcepath \
                    + "\nName: " + self.name + "\nType: " + self.datatype
         data_info = ""
         if self.datatype == "table":
@@ -139,6 +139,5 @@ class DataNode(gobject.GObject):
         return the datatype of this DataNode
         """
         return self.datatype
-
 
 gobject.type_register( DataNode )

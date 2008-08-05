@@ -62,8 +62,7 @@ class Hdf5Plugin(datasource.DataSource):
                 else:
                     print "ERROR: unknown type [%s]" % str(type(node))
                     continue
-                path = pathname.split('/')[1:]
-                datanode = datasource.DataNode(path[-1], nodetype, tuple(path), self)
+                datanode = datasource.DataNode(pathname.split('/')[-1], nodetype, pathname, self)
 
                 ret.append((parent, datanode))
         return ret
@@ -73,28 +72,24 @@ class Hdf5Plugin(datasource.DataSource):
                + "\nFilename: " + self.filename
         
     def get_data(self, path, slicer):
-        p = '/'.join(path)
-        node = self.hdf.getNode('/' + p)
+        node = self.hdf.getNode(path)
         if type(node) == tables.array.Array:
             return node
         else: # a table
             return node.col(slicer)
 
     def get_shape(self, path):
-        p = '/'.join(path)
-        node = self.hdf.getNode('/' + p)
+        node = self.hdf.getNode(path)
         return node.shape
 
     def get_tableinfo(self, path):
         colnames = ' '.join(self.get_columnnames(path))
-        p = '/'.join(path)
-        table = self.hdf.getNode('/' + p)
+        table = self.hdf.getNode(path)
         rows = len(table)
         return 'table lenght: %i\nColnames: %s' % (rows, colnames)
 
     def get_columnnames(self, path):
-        p = '/'.join(path)
-        table = self.hdf.getNode('/' + p)
+        table = self.hdf.getNode(path)
         return table.colnames
 
 

@@ -468,7 +468,7 @@ class MainWindow(gtk.Window):
                     if xsource.getAttribute("source") != "":
                         xnode.set_data(source_dict[xsource.getAttribute("source")],
                                        xsource.getAttribute("source"),
-                                       xsource.getAttribute("path").split(" "),
+                                       xsource.getAttribute("path"),
                                        xsource.getAttribute("slicer"))
                     xpath = self.plotmodel.add_node((ip,isp), xnode)
                     for iy, yaxis in enumerate(xaxis.getElementsByTagName("yaxis")):
@@ -476,7 +476,7 @@ class MainWindow(gtk.Window):
                         ysource = yaxis.getElementsByTagName("datasource")[0]
                         ynode.set_data(source_dict[ysource.getAttribute("source")],
                                        ysource.getAttribute("source"),
-                                       ysource.getAttribute("path").split(" "),
+                                       ysource.getAttribute("path"),
                                        ysource.getAttribute("slicer"))
                         ypath = self.plotmodel.add_node((ip,isp,ix), ynode)
                         self.plotmodel.add_line(ypath)

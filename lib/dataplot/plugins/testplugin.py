@@ -29,14 +29,14 @@ a = numpy.random.rand(30,10)
 table1 = dict([("test" + str(i), a[:,i]) for i in xrange(a.shape[1])])
 table2 = dict([("test" + str(i), a[i,:]) for i in xrange(a.shape[0])])
 
-testdata = [[[], ["root"], "testroot", "folder", None],
-            [[0], ["root","table1"], "testtable1", "table", table1],
-            [[0], ["root","table2"], "testtable2", "table", table2],
-            [[0], ["root","arrays"], "arrays", "folder", None],
-            [[0,1], ["root","arrays","data1d1"], "data1d1", "array1d", numpy.arange(100)],
-            [[0,1], ["root","arrays","data1d2"], "data1d2", "array1d", numpy.random.rand(100)],
-            [[0,1], ["root","arrays","data2d"], "data2d", "array2d", numpy.random.rand(20,20)],
-            [[0,1], ["root","arrays","data3d"], "data3d", "array3d", numpy.random.rand(10,20,30)]]
+testdata = [[[], "/root", "testroot", "folder", None],
+            [[0], "/root/table1", "testtable1", "table", table1],
+            [[0], "/root/table2", "testtable2", "table", table2],
+            [[0], "/root/arrays", "arrays", "folder", None],
+            [[0,1], "/root/arrays/data1d1", "data1d1", "array1d", numpy.arange(100)],
+            [[0,1], "/root/arrays/data1d2", "data1d2", "array1d", numpy.random.rand(100)],
+            [[0,1], "/root/arrays/data2d", "data2d", "array2d", numpy.random.rand(20,20)],
+            [[0,1], "/root/arrays/data3d", "data3d", "array3d", numpy.random.rand(10,20,30)]]
 
 class TestPlugin(datasource.DataSource):
     """
@@ -58,9 +58,9 @@ class TestPlugin(datasource.DataSource):
             node = datasource.DataNode(name, nodetype, path, self)
             ret.append((localparent, node))
             if nodetype[:5] == "array":
-                self.testdatadict[tuple(path)] = data
+                self.testdatadict[path] = data
             elif nodetype == "table":
-                self.testtabledict[tuple(path)] = data
+                self.testtabledict[path] = data
         return ret
                 
     def get_info(self):
@@ -68,17 +68,17 @@ class TestPlugin(datasource.DataSource):
                + "\nFilename: " + self.filename
         
     def get_data(self, path, slicer):
-        if self.testdatadict.has_key(tuple(path)):
-            return self.testdatadict[tuple(path)]
+        if self.testdatadict.has_key(path):
+            return self.testdatadict[path]
         else:
-            return self.testtabledict[tuple(path)][slicer]
+            return self.testtabledict[path][slicer]
 
     def get_shape(self, path):
-        return self.testdatadict[tuple(path)].shape
+        return self.testdatadict[path].shape
 
     def get_tableinfo(self, path):
         return "Colnames: " + " ".join(self.get_columnnames(path)) + "\n"
 
     def get_columnnames(self, path):
-        return self.testtabledict[tuple(path)].keys()
+        return self.testtabledict[path].keys()
 

@@ -319,7 +319,7 @@ class DataNode(gobject.GObject):
         self.nodetype = nodetype
         self.datasource = None
         self.sourcename = None
-        self.datapath = []
+        self.datapath = None
         self.dataslicer = None
         self.simpleoperator = None
 
@@ -342,7 +342,7 @@ class DataNode(gobject.GObject):
 
     def get_source(self):
         return { "source": self.sourcename,
-                 "path": " ".join(self.datapath),
+                 "path": self.datapath,
                  "slicer": self.dataslicer,
                  "operator": self.simpleoperator}
 

@@ -50,7 +50,7 @@ class GnucapPlugin(datasource.DataSource):
             self.table[col] = array[:,i]
         
     def load(self):
-        node = datasource.DataNode("gnucap-data", "table", ["table"], self)
+        node = datasource.DataNode("gnucap-data", "table", "/table", self)
         return [((), node)]
                 
     def get_data(self, path, slicer):
