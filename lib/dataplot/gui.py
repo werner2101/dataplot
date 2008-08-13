@@ -24,6 +24,8 @@ import xml.dom.minidom
 
 import datatree, plottree, dialogs
 
+from utils import *
+
 import testplugin, gnucapplugin, spiceplugin, touchstoneplugin, hdf5plugin
 
 
