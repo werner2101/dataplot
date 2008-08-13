@@ -108,13 +108,6 @@ class DataNode(gobject.GObject):
         self.sourcepath = path
         self.datasource = source
 
-    def get_data(self):
-        """
-        gets the data from the source that is represented by this
-        DataNode
-        """
-        self.datasource.get_data(self.sourcepath)
-
     def get_name(self):
         """
         returns the name of this DataNode
