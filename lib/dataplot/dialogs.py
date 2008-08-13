@@ -99,109 +99,140 @@ class ArrayDataSelection(gtk.Dialog):
                             gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                             (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                              gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
-        self.shape = shape
-        self.sel_ranks = []
+        self.vbox.set_homogeneous(False)
+        self.vbox.set_spacing(10)
+        
+        self.shape = list(shape)
+        self.dim = self.shape.index(max(self.shape))
 
+        label = gtk.Label('<b>Shape of the array: %s</b>'%str(self.shape))
+        label.set_use_markup(True)
+        self.vbox.pack_start(label, False, False)
+
+        ## combo box to select the variable dimension
         hbox = gtk.HBox()
         self.vbox.pack_start(hbox, False, True)
-        for rank in xrange(len(self.shape)):
-            hbox.pack_start(gtk.Label("D%i: " % rank), False, False)
+        label = gtk.Label('Variable Dimension: ')
+        hbox.pack_start(label, False, False)
 
-            liststore = gtk.ListStore(gobject.TYPE_STRING)
-            sel = [ '%i'%i for i in xrange(self.shape[rank]) ]
-            for n in ['Var', 'Sel'] + sel:
-                liststore.append((n,))
+        liststore = gtk.ListStore(gobject.TYPE_STRING)
+        for n in xrange(len(self.shape)):
+            liststore.append(('dimension%i'% (n+1),))
+        dimension_combo = gtk.ComboBox(liststore)
+        cell = gtk.CellRendererText()
+        dimension_combo.pack_start(cell, True)
+        dimension_combo.add_attribute(cell, 'text', 0)
+        dimension_combo.set_active(self.dim)
+        hbox.pack_start(dimension_combo, False, False)
 
-            combo = gtk.ComboBox(liststore)
-            cell = gtk.CellRendererText()
-            combo.pack_start(cell, True)
-            combo.add_attribute(cell, 'text', 0)
-            if rank == list(self.shape).index(max(self.shape)):
-                combo.set_active(0)
+        dimension_combo.connect('changed', self.event_dimension_changed)
+
+        table_x = 2 + len(self.shape)
+        table_y = 1 + min(self.shape) 
+        self.table = gtk.Table(table_x, table_y)
+        ## headlines
+        label = gtk.Label('<b>Name</b>')
+        label.set_use_markup(True)
+        self.table.attach(label,0,2,0,1)
+        for i in xrange(len(self.shape)):
+            label = gtk.Label('<b>Dim%i</b>'%(i+1))
+            label.set_use_markup(True)
+            self.table.attach(label,2+i, 3+i, 0,1)
+        self.table_content = []
+        for y in xrange(1, table_y):
+            table_row = []
+            if y > 15:
+                break
+            cb = gtk.CheckButton()
+            cb.connect('toggled', self.event_checkbutton_toggle, y-1)
+            self.table.attach(cb, 0, 1, y, y+1)
+            table_row.append(cb)
+            if y == 1:
+                name = 'x-data'
             else:
-                combo.set_active(1)
-            self.sel_ranks.append(combo)
-            hbox.pack_start(combo, False, False)
-            combo.connect("changed", self.event_selection_changed)
-
-
-        scrollwin = gtk.ScrolledWindow()
-        scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scrollwin.set_size_request(-1, 200)
-
-        self.listview = gtk.TreeView()
-        x_cell = gtk.CellRendererToggle()
-        x_cell.set_property("radio", True)
-        x_cell.set_property("activatable", True)
-        x_cell.connect('toggled', self.x_toggle, self.listview)
-                      
-        y_cell = gtk.CellRendererToggle()
-        y_cell.set_property("activatable", True)
-        y_cell.connect('toggled', self.y_toggle, self.listview)
-
-        self.listview.append_column(gtk.TreeViewColumn("X", x_cell , active=0))
-        self.listview.append_column(gtk.TreeViewColumn("Y", y_cell , active=1))
-        self.listview.append_column(gtk.TreeViewColumn("Slice", gtk.CellRendererText(), text=2))
-
-        scrollwin.add_with_viewport(self.listview)
-        self.vbox.add(scrollwin)
-
-        self.fill_model()
+                name = 'y-data%i'%(y-1)
+            self.table.attach(gtk.Label(name), 1, 2, y, y+1)
+            table_row.append(name)
+            for x, n in enumerate(self.shape):
+                adj = gtk.Adjustment(y-1,0,n-1,1,10)
+                sb = gtk.SpinButton(adj,digits=0)
+                self.table.attach(sb, x+2, x+3, y, y+1)
+                table_row.append(sb)
+            self.table_content.append(table_row)
+        
+        self.vbox.add(self.table)
+        self.update_table()
         self.show_all()
 
-    def fill_model(self):
-        liststore = gtk.ListStore(gobject.TYPE_BOOLEAN, gobject.TYPE_BOOLEAN, str)
-        groups = []
-        for rank, combo in enumerate(self.sel_ranks):
-            content = combo.get_model()[combo.get_active()][0]
-            if content == "Var":
-                groups.append([':'])
-            elif content == "Sel":
-                l = [ '%i'%i for i in xrange(self.shape[rank]) ]
-                groups.append(l)
-            else:
-                groups.append([content])
 
-        sel = [""]
-        for g in groups:
-            sel_new = []
-            for s in sel:
-                sel_new.extend([ s + gm + ','  for gm in g ])
-            sel = sel_new
-        
-        for s in sel:
-            liststore.append([False, False, '[' + s[:-1] + ']'])
-        self.listview.set_model(liststore)
+    def update_table(self, row=None):
+        """
+        Change the sensitivity of the table elements depending on the
+        variable dimension combo and the checkbuttons in the first column.
+        """
+        if row != None:
+            rows = [row]
+        else:
+            rows = range(len(self.table_content))
 
+        for i in rows:
+            r = self.table_content[i]
+            for i,c in enumerate(r[2:]):
+                if r[0].get_active() == False or self.dim == i:
+                    c.set_sensitive(False)
+                else:
+                    c.set_sensitive(True)
+            
 
     def get_content(self):
+        """
+        This function returns the settings of the dialog.
+        one slice string for the x-axes, and a list of
+        slice strings for many y-axes.
+        """
         x,y = None, []
-        for row in self.listview.get_model():
-            if row[0] == True:
-                x = row[2]
-            if row[1] == True:
-                y.append(row[2])
+
+        row = self.table_content[0]
+        if row[0].get_active():
+            x = self.get_slice(self.table_content[0])
+
+        for row in self.table_content[1:]:
+            if row[0].get_active():
+                y.append(self.get_slice(row))
+
         return {"x_column": x,
                 "y_columns": y}
+
+    def get_slice(self, row):
+        """
+        convert the settings of a single row into a numpy slicer
+        string. The variable 
+        """
+        cols = []
+        for i,col in enumerate(row[2:]):
+            adj = col.get_adjustment().get_value()
+            if i == self.dim:
+                cols.append(':')
+            else:
+                cols.append('%i'%round(adj))
+        return '[' + ','.join(cols) + ']'
+        
             
-    def event_selection_changed(self, combo):
-        self.fill_model()
-        
-    def x_toggle(self, cell, path, listview):
+    def event_dimension_changed(self, combo):
         """
-        Callback when the toggle buttons of the X-row is toggled.
-        Only allow one x-value to be selected from the x-row
+        Callback function that updates the sensitive widgets depending on
+        the dimension combo
         """
-        mm = listview.get_model()
-        newstate = not mm[path][0]
-        for row in mm:
-            row[0] = False
-        mm[path][0] = newstate
+        self.dim = combo.get_active()
+        self.update_table()
         
-    
-    def y_toggle(self, cell, path, listview):
-        mm = listview.get_model()
-        mm[path][1] = not mm[path][1]
+    def event_checkbutton_toggle(self, widget, row):
+        """
+        Callback when the toggle buttons of the activation row is toggled.
+        Just toggling the active state
+        """
+        self.update_table(row)
+        
 
 
 
