@@ -127,5 +127,22 @@
         </xaxis>
       </subplot>
     </plot>
+    <plot name="newplot">
+      <subplot name="newplot">
+        <properties grid="1" legend="0" title="" xlabel="" xlog="0" xmax="" xmin="" ylabel="" ylog="0" ymax="" ymin=""/>
+        <xaxis name="[1,:]">
+          <datasource operator="" path="/sin_cos/N100000" slicer="[1,:]" source="testdata.hdf5"/>
+          <yaxis name="N100000[2,:]">
+            <datasource operator="" path="/sin_cos/N100000" slicer="[2,:]" source="testdata.hdf5"/>
+          </yaxis>
+          <yaxis name="N100000[3,:]">
+            <datasource operator="" path="/sin_cos/N100000" slicer="[3,:]" source="testdata.hdf5"/>
+          </yaxis>
+          <yaxis name="N100000[4,:]">
+            <datasource operator="" path="/sin_cos/N100000" slicer="[4,:]" source="testdata.hdf5"/>
+          </yaxis>
+        </xaxis>
+      </subplot>
+    </plot>
   </plotdata>
 </dataplot>

@@ -303,10 +303,14 @@ class SubplotNode(gobject.GObject):
 
     def get_properties(self):
         [xmin, xmax, ymin, ymax] = self.axes.axis()
-        self.properties["xmin"] = str(xmin)
-        self.properties["xmax"] = str(xmax)
-        self.properties["ymin"] = str(ymin)
-        self.properties["ymax"] = str(ymax)
+        if (self.properties["xmin"]) != "":
+            self.properties["xmin"] = str(xmin).replace(',','.')
+        if (self.properties["xmax"]) != "":
+            self.properties["xmax"] = str(xmax).replace(',','.')
+        if (self.properties["ymin"]) != "":
+            self.properties["ymin"] = str(ymin).replace(',','.')
+        if (self.properties["ymax"]) != "":
+            self.properties["ymax"] = str(ymax).replace(',','.')
         return self.properties
         
 
@@ -317,11 +321,11 @@ class DataNode(gobject.GObject):
         gobject.GObject.__init__(self)
         self.name = name
         self.nodetype = nodetype
-        self.datasource = None
-        self.sourcename = None
-        self.datapath = None
-        self.dataslicer = None
-        self.simpleoperator = None
+        self.datasource = ""
+        self.sourcename = ""
+        self.datapath = ""
+        self.dataslicer = ""
+        self.simpleoperator = ""
 
     def set_data(self, datasource, sourcename, datapath, dataslicer=None):
         self.datasource = datasource
@@ -330,7 +334,7 @@ class DataNode(gobject.GObject):
         self.dataslicer = dataslicer
 
     def get_vector(self):
-        if not self.datasource:
+        if self.datasource == "":
             return None
         else:
             data = self.datasource.get_data(self.datapath, self.dataslicer)
@@ -347,12 +351,12 @@ class DataNode(gobject.GObject):
                  "operator": self.simpleoperator}
 
     def getinfo(self):
-        x = ["Name: " + str(self.name),
-             "Type: " + str(self.nodetype),
-             "Data Source: " + str(self.sourcename),
-             "Data Path: " + str(self.datapath),
-             "Slicer: " + str(self.dataslicer),
-             "Operator: " + str(self.simpleoperator)]
+        x = ["Name: " + self.name,
+             "Type: " + self.nodetype,
+             "Data Source: " + self.sourcename,
+             "Data Path: " + self.datapath,
+             "Slicer: " + self.dataslicer,
+             "Operator: " + self.simpleoperator]
 
         return "\n".join(x)
     

@@ -315,25 +315,29 @@ class SingleplotOptions(gtk.Dialog):
         align.add(table)
                 
         self.xmin_check = gtk.CheckButton()
-        self.xmin_check.set_active(True)
+        self.xmin_check.set_active(prop.get("xmin") != "")
         self.xmax_check = gtk.CheckButton()
-        self.xmax_check.set_active(True)
+        self.xmax_check.set_active(prop.get("xmax") != "")
         self.xmin_entry = gtk.Entry()
         self.xmin_entry.set_text(prop.get("xmin", "0.0"))
+        self.xmin_entry.set_sensitive(prop.get("xmin") != "")
         self.xmin_entry.set_width_chars(10)
         self.xmax_entry = gtk.Entry()
         self.xmax_entry.set_text(prop.get("xmax", "1.0"))
+        self.xmax_entry.set_sensitive(prop.get("xmax") != "")
         self.xmax_entry.set_width_chars(10)
 
         self.ymin_check = gtk.CheckButton()
-        self.ymin_check.set_active(True)
+        self.ymin_check.set_active(prop.get("ymin") != "")
         self.ymax_check = gtk.CheckButton()
-        self.ymax_check.set_active(True)
+        self.ymax_check.set_active(prop.get("ymax") != "")
         self.ymin_entry = gtk.Entry()
         self.ymin_entry.set_text(prop.get("ymin", "0.0"))
+        self.ymin_entry.set_sensitive(prop.get("ymin") != "")
         self.ymin_entry.set_width_chars(10)
         self.ymax_entry = gtk.Entry()
         self.ymax_entry.set_text(prop.get("ymax", "0.0"))
+        self.ymax_entry.set_sensitive(prop.get("ymax") != "")
         self.ymax_entry.set_width_chars(10)
 
 
@@ -387,20 +391,4 @@ class SingleplotOptions(gtk.Dialog):
             prop["ymax"] = self.ymax_entry.get_text()
 
         return prop
-        
-    def x_toggle(self, cell, path, listview):
-        """
-        Callback when the toggle buttons of the X-row is toggled.
-        Only allow one x-value to be selected from the x-row
-        """
-        mm = listview.get_model()
-        newstate = not mm[path][0]
-        for row in mm:
-            row[0] = False
-        mm[path][0] = newstate
-        
-    
-    def y_toggle(self, cell, path, listview):
-        mm = listview.get_model()
-        mm[path][1] = not mm[path][1]
         

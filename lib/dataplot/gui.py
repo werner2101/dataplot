@@ -417,8 +417,7 @@ class MainWindow(gtk.Window):
                 properties = dom.createElement("properties")
                 subplot_node.appendChild(properties)
                 for k,v in subplot[2].get_properties().items():
-                    v = { None: "", True: "1", False: "0"}.get(v,v)
-                    properties.setAttribute(k, str(v))
+                    properties.setAttribute(k, v)
 
                 for xaxis in subplot.iterchildren():
                     xaxis_node = dom.createElement("xaxis")
@@ -427,7 +426,6 @@ class MainWindow(gtk.Window):
                     xsource_node = dom.createElement("datasource")
                     xaxis_node.appendChild(xsource_node)
                     for k,v in xaxis[2].get_source().items():
-                        v = { None: "", True: "1", False: "0"}.get(v,v)
                         xsource_node.setAttribute(k, v)
 
                     for yaxis in xaxis.iterchildren():
@@ -437,7 +435,6 @@ class MainWindow(gtk.Window):
                         ysource_node = dom.createElement("datasource")
                         yaxis_node.appendChild(ysource_node)
                         for k,v in yaxis[2].get_source().items():
-                            v = { None: "", True: "1", False: "0"}.get(v,v)
                             ysource_node.setAttribute(k, v)
                         
         open(filename, "w").write(dom.toprettyxml("  "))
