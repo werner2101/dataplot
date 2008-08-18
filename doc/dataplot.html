@@ -5,15 +5,110 @@
   </head>
 
   <body>
-    <h1>dataplot, a viewer for electrical data</h1>
+    <h2>dataplot, a viewer for electrical data</h2> 
 
+    The dataplot application aims to become a versatile data viewer
+    moslty designed for electronic developers. The application is
+    written with python using gtk widgets. The application heavily
+    relies on matplotlib for plotting and numpy for all data.
+
+    <h3>design overview</h3>
+    The application is splitted into the following main parts:
+    <ul>
+      <li>The <b>datatree</b> on the left side stores all the different datasources.</li>
+      <li>The <b>plottree</b> holds all informations about how to plot some of the data.</li>
+      <li>The <b>plotnotebook</b> displays the plots with matplotlib.</li>
+      <li>And on the bottom of the application there's a logging notebook for infos, ...</li>
+    </ul>
+    There's a one to one relationship between the plottree and the
+    plotnotebook. Where the first level refers the tabs of the
+    notebook. The second level can hold some subplots (not
+    implemented yet). The third holds the x-axis data and the 4th
+    holds the y-axis data. <p></p>
+
+    <img alt="basic screenshot" src="bitmaps/dataplot_out.png"> <p></p>
+
+    <h3>datatree and datasource plugins</h3>
+    The datatree is a representation for all opened datasources. It can have the following entry types:
+    <ul>
+      <li><b>datasource objects</b> that represent a single datasource</li>
+      <li><b>folder elements</b> are used to create a tree like structure</li>
+      <li><b>array elements</b> with one to three dimensions</li>
+      <li><b>table elements</b> where a table has several named 1-dimentional data arrays</li>
+    </ul>
+    A datasource is opened with the data menu that contains an entry for each available datasource plugin.
+    A datasource plugin has a fixed interface that can load data files, return the tree structure of the
+    given dataset and has some access functions to get the data from a specific data element.<p></p>
+    
+    The currently available datasource plugins are:
+    <ul>
+      <li><b>ngspice</b> binary and ascii files</li>
+      <li><b>gnucap</b> ascii tables</li>
+      <li><b>touchstone</b> s-parameter files</li>
+      <li><b>hdf5</b> a small subset of hierarchical data format files</li>
+    </ul>
+
+    When activating (double-clicking) an array with 2 or 3 dimensions,
+    you can select a single 1d-array with the following dialog: <p></p>
+
+    <img alt="array selection dialog" src="bitmaps/dialog_arrayselection.png"> <p></p>
+
+    The dialog just generates one or more slices of the selected data
+    that would be generated with the array operator like "data[:,2]"
+    or data[2,2,:] with python.  You can select one vector as
+    x-data and one or more as y-data.  Accepting the input of the
+    dialog will add the selected vectors to the current plot. <p></p>
+
+    When activating an table entry you can select one column of the data as x-data and
+    one or more as y-data.
+    If you select no x-data, a generic x-data vector will be used.<p></p>
+  
+    <img alt="table selection dialog" src="bitmaps/dialog_tableselection.png"> <p></p>
+
+    The selected vectors are stored as references to the datasource
+    with the three variables datasource, path, slicer. The path refers
+    the interal location inside the datasource. The slicer either
+    contains the column name for tables and a slicing description for
+    arrays.
+
+    <h3>plottree and plotting</h3> 
+
+    The options for a current subplot can be set with a dialog. It is
+    opened when activating the subplot node. <p></p>
+
+    <img alt="subplot option dialog" src="bitmaps/dialog_subplotoptions.png"> <p></p>
+    
+    Basic scrolling and paning can be done with the mouse wheel.
+
+    <h2>development and source code</h2>
+    This small application is currently under development. If you like to play with it you can get the source
+    from the git repository <a href="http://repo.or.cz/w/dataplot.git">http://repo.or.cz/w/dataplot.git</a>.
+
+    <h3>todo</h3>
+    Here's a list of features that I plan to code:
+    <ul>
+      <li>more zooming, paning modes with toolbar icons</li>
+      <li>more than one subplots inside of each plot notebook</li>
+      <li>color and style options for the lines</li>
+      <li>handling of 1d-arrays</li>
+      <li>operators for simple data manipulations (abs, imag, real, angle, invert, ...)</li>
+      <li>reload of datasources (handle missing files, missing data, ...)</li>
+      <li>paranoid error checking for every operation</li>
+      <li>error and message logging</li>
+      <li>cursors and markers</li>
+      <li>dbus interface</li>
+      <li>printing and exporting</li>
+    </ul>
+
+      
+	
 
 
     <hr>
     <address><a href="mailto:werner.ho@gmx.de">Werner Hoch</a></address>
 <!-- Created: Sat Jul 12 16:50:32 CEST 2008 -->
 <!-- hhmts start -->
-Last modified: Sat Jul 12 16:50:36 CEST 2008
+Last modified: Mon Aug 18 20:56:03 CEST 2008
 <!-- hhmts end -->
   </body>
 </html>

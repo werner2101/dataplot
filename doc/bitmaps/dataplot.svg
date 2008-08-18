@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="dataplot.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleOutM"
+       style="overflow:visible">
+      <path
+         id="path3723"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInM"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleInM"
+       style="overflow:visible">
+      <path
+         id="path3714"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(-0.4)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2453"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.29938272"
+     inkscape:cx="1701.5466"
+     inkscape:cy="154.89955"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1392"
+     inkscape:window-height="975"
+     inkscape:window-x="1280"
+     inkscape:window-y="-16" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <image
+       y="131.21931"
+       x="-81.142868"
+       id="image2455"
+       height="648"
+       width="928"
+       sodipodi:absref="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_in.png"
+       xlink:href="dataplot_in.png"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffcc00;fill-opacity:0.43103446;fill-rule:nonzero;stroke:#554400;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 632.97843,530.46134 L 693.49937,568.47649 L 693.49937,605.60664 L 839.65558,605.60664 L 839.65558,562.20039 L 706.36471,562.20039 L 632.97843,530.46134 z"
+       id="rect2465"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Sans;-inkscape-font-specification:Sans"
+       x="706.87122"
+       y="581.39319"
+       id="text2461"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan2740"
+         x="706.87122"
+         y="581.39319">plotting area</tspan><tspan
+         sodipodi:role="line"
+         x="706.87122"
+         y="598.89319"
+         id="tspan2794">using matplotlib</tspan></text>
+    <path
+       sodipodi:nodetypes="ccccccc"
+       id="path2758"
+       d="M 236.32892,645.69846 L 287.24677,659.49711 L 287.24677,696.62726 L 433.40306,696.62726 L 433.40306,653.22101 L 294.68427,653.22101 L 236.32892,645.69846 z"
+       style="fill:#ffcc00;fill-opacity:0.43103446;fill-rule:nonzero;stroke:#554400;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffcc00;fill-opacity:0.43103446;fill-rule:nonzero;stroke:#554400;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1"
+       d="M -44.24838,532.13145 L -18.38208,564.30123 L -18.38208,601.43138 L 127.77421,601.43138 L 127.77421,558.02513 L -10.944581,558.02513 L -44.24838,532.13145 z"
+       id="path2766"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Sans;-inkscape-font-specification:Sans"
+       x="298.94852"
+       y="673.24884"
+       id="text2768"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan2770"
+         x="298.94852"
+         y="673.24884">Info, Messages and </tspan><tspan
+         sodipodi:role="line"
+         id="tspan2772"
+         x="298.94852"
+         y="690.74884">Errors area</tspan></text>
+    <path
+       sodipodi:nodetypes="ccccccc"
+       id="path2774"
+       d="M 218.79285,521.27577 L 210.42204,562.63112 L 210.42204,599.76127 L 356.57825,599.76127 L 356.57825,556.35502 L 217.85954,556.35502 L 218.79285,521.27577 z"
+       style="fill:#ffcc00;fill-opacity:0.43103446;fill-rule:nonzero;stroke:#554400;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text2776"
+       y="574.71277"
+       x="222.12381"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Sans;-inkscape-font-specification:Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         y="574.71277"
+         x="222.12381"
+         id="tspan2778"
+         sodipodi:role="line">the plottree contains</tspan><tspan
+         y="592.21277"
+         x="222.12381"
+         sodipodi:role="line"
+         id="tspan2796">all plot informations</tspan><tspan
+         y="609.71277"
+         x="222.12381"
+         id="tspan2780"
+         sodipodi:role="line" /></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2760"
+       y="576.38287"
+       x="-7.5153918"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Sans;-inkscape-font-specification:Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         y="576.38287"
+         x="-7.5153918"
+         id="tspan2764"
+         sodipodi:role="line">the datatree contains</tspan><tspan
+         y="593.88287"
+         x="-7.5153918"
+         sodipodi:role="line"
+         id="tspan2800">all data sources</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;marker-start:none;marker-end:url(#TriangleOutM);opacity:0.7"
+       d="M 298.53092,302.90342 C 351.28334,312.86701 455.75745,290.02481 486.83505,246.53744"
+       id="path2802"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 489.34021,247.79002 L 487.6701,246.95497"
+       id="path5390"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path5470"
+       d="M 239.24225,350.50136 C 310.04102,364.38652 485.99999,449.20887 551.96906,547.99105"
+       style="opacity:0.7;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#TriangleOutM);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:0.7;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#TriangleOutM);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 284.33504,254.47043 C 317.55649,267.94103 367.42268,267.35708 389.13402,242.36218"
+       id="path5472"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path5474"
+       d="M 289.76287,397.26425 C 370.07324,435.72003 530.63551,416.457 592.46906,356.34672"
+       style="opacity:0.7;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#TriangleOutM);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:0.7;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;marker-start:none;marker-end:url(#TriangleOutM);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 298.94844,327.11991 C 311.2936,325.99002 369.51031,350.91888 369.51031,350.91888"
+       id="path5476"
+       sodipodi:nodetypes="cs"
+       inkscape:export-filename="/home/werner/oss/geda/dataplot/doc/bitmaps/dataplot_out.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>
