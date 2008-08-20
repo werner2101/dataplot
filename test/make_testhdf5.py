@@ -52,4 +52,14 @@ y_cos2 = 1*numpy.sin(5*x)
 a = numpy.vstack([x, 1j*y_sin1 + y_cos1, 1j*y_sin2 + y_cos2])
 f.createArray('/complex', 'sin', a)
 
+# create data that is only positive or negativ
+f.createGroup('/', 'quadrant')
+y_sin1 = numpy.sin(x) + 2
+y_cos1 = numpy.cos(x) + 2
+y_sin2 = numpy.sin(x) - 2
+y_cos2 = numpy.cos(x) - 2
+a = numpy.vstack([x, y_sin1, y_sin2, y_cos1, y_cos2])
+f.createArray('/quadrant', 'sin_cos', a)
+
+
 f.close()

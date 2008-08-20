@@ -133,7 +133,6 @@ class PlotNode(gobject.GObject):
         self.figure.canvas.draw()
 
 
-
 class SubplotNode(gobject.GObject):
 
     nodetype = "singleplot"
@@ -159,105 +158,98 @@ class SubplotNode(gobject.GObject):
 
 
     def event_scroll(self, widget, event):
+        """
+        callback for the mouse scroll event
+        """
+        ## get the coordinate of the data where the mouse points to.
+        ## the origin for the point (event.x, event.y) is top left.
+        ## matplotlib refers expects the origin at bottom left. The event.y must be inverted
+        width, height = self.figure.canvas.get_width_height()
+        ## get the data location
+        xdata, ydata = self.axes.transData.inverted().transform_point((event.x, height - event.y))
+        [xmin, xmax, ymin, ymax] = self.axes.axis()
+
         if event.state & gtk.gdk.CONTROL_MASK:
             if event.state & gtk.gdk.SHIFT_MASK:
                 if event.direction == gtk.gdk.SCROLL_UP:
-                    self.zoomy("out")
+                    ymin, ymax = self.zoom(ymin, ydata, ymax, "out",
+                                            self.properties['ylog'] == '1')
                 else:
-                    self.zoomy("in")
+                    ymin, ymax = self.zoom(ymin, ydata, ymax, "in",
+                                            self.properties['ylog'] == '1')
+                self.axes.axis(ymin=ymin, ymax=ymax)
             else:
                 if event.direction == gtk.gdk.SCROLL_UP:
-                    self.zoomx("out")
+                    xmin, xmax = self.zoom(xmin, xdata, xmax, "out",
+                                            self.properties['xlog'] == '1')
                 else:
-                    self.zoomx("in")
+                    xmin, xmax = self.zoom(xmin, xdata, xmax, "in",
+                                            self.properties['xlog'] == '1')
+                self.axes.axis(xmin=xmin, xmax=xmax)
         else:
             if event.state & gtk.gdk.SHIFT_MASK:
                 if event.direction == gtk.gdk.SCROLL_UP:
-                    self.pany("up")
+                    # pan up
+                    ymin, ymax = self.pan(ymin, ymax, "up",
+                                          self.properties['ylog'] == '1')
                 else:
-                    self.pany("down")
-            else:
+                    # pan down
+                    ymin, ymax = self.pan(ymin, ymax, "down",
+                                          self.properties['ylog'] == '1')
+                self.axes.axis(ymin=ymin, ymax=ymax)
+            else: 
                 if event.direction == gtk.gdk.SCROLL_UP:
-                    self.panx("right")
+                    # pan right
+                    xmin, xmax = self.pan(xmin, xmax, "up",
+                                          self.properties['xlog'] == '1')
                 else:
-                    self.panx("left")
+                    # pan left
+                    xmin, xmax = self.pan(xmin, xmax, "down",
+                                          self.properties['xlog'] == '1')
+                self.axes.axis(xmin=xmin, xmax=xmax)
+
         self.figure.canvas.draw()
 
-    def zoomx(self, direction="in"):
-        [xmin, xmax, ymin, ymax] = self.axes.axis()
+    def zoom(self, smin, scur, smax, direction="in", logscale=False):
         if direction == "out":
-            if self.properties["xlog"] == "1":
-                qx = 0.2 * math.log10(xmax / xmin)
-                xmax = xmax * 10**(qx)
-                xmin = xmin * 10**(-qx)
-            else:
-                diffx = xmax - xmin
-                xmax = xmax + 0.2*diffx
-                xmin = xmin - 0.2*diffx
+            factor = 1.2
         else:
-            if self.properties["xlog"] == "1":
-                qx = 0.1 * math.log10(xmax / xmin)
-                xmax = xmax * 10**(-qx)
-                xmin = xmin * 10**(qx)
-            else:
-                diffx = xmax - xmin
-                xmax = xmax - 0.1*diffx
-                xmin = xmin + 0.1*diffx
-        self.axes.axis(xmin=xmin, xmax=xmax)
+            factor = 1/1.2
 
-    def zoomy(self, direction="in"):
-        [xmin, xmax, ymin, ymax] = self.axes.axis()
-        if direction == "out":
-            if self.properties["ylog"] == "1":
-                qy = 0.2 * math.log10(ymax / ymin)
-                ymax = ymax * 10**(qy)
-                ymin = ymin * 10**(-qy)
-            else:
-                diffy = ymax - ymin
-                ymax = ymax + 0.2*diffy
-                ymin = ymin - 0.2*diffy
-        else:
-            if self.properties["ylog"] == "1":
-                qy = 0.1 * math.log10(ymax / ymin)
-                ymax = ymax * 10**(-qy)
-                ymin = ymin * 10**(qy)
-            else:
-                diffy = ymax - ymin
-                ymax = ymax - 0.1*diffy
-                ymin = ymin + 0.1*diffy
-        self.axes.axis(ymin=ymin, ymax=ymax)
+        if logscale:
+            smin = math.log(smin)
+            scur = math.log(scur)
+            smax = math.log(smax)
 
-    def panx(self, direction="left"):
-        [xmin, xmax, ymin, ymax] = self.axes.axis()
-        if direction == 'left':
-            m = 1
-        else:
-            m = -1
-        if self.properties["xlog"] == "1":
-            qx = 0.1 * math.log10(xmax / xmin)
-            xmax = xmax * 10**(m*qx)
-            xmin = xmin * 10**(m*qx)
-        else:
-            diffx = 0.1 * (xmax - xmin)
-            xmax = xmax + m*diffx
-            xmin = xmin + m*diffx
-        self.axes.axis(xmin=xmin, xmax=xmax)
+        smin = scur - (scur - smin)* factor
+        smax = scur + (smax - scur)* factor
 
-    def pany(self, direction="up"):
-        [xmin, xmax, ymin, ymax] = self.axes.axis()
-        if direction == 'up':
-            m = 1
+        if logscale:
+            smin = 10**smin
+            smax = 10**smax
+
+        return smin, smax
+
+    def pan (self, smin, smax, direction="down", logscale=False):
+        factor = 0.2
+        if direction == "down":
+            d = -1
         else:
-            m = -1
-        if self.properties["ylog"] == "1":
-            qy = 0.1 * math.log10(ymax / ymin)
-            ymax = ymax * 10**(m*qy)
-            ymin = ymin * 10**(m*qy)
-        else:
-            diffy = 0.1 * (ymax - ymin)
-            ymax = ymax + m*diffy
-            ymin = ymin + m*diffy
-        self.axes.axis(ymin=ymin, ymax=ymax)
+            d = 1
+
+        if logscale:
+            smin = math.log(smin)
+            smax = math.log(smax)
+
+        delta = d * (smax - smin) * factor
+        smin = smin + delta
+        smax = smax + delta
+
+        if logscale:
+            smin = 10**smin
+            smax = 10**smax
+
+        return smin, smax
 
     def getinfo(self):
         return "Subplot: " + self.name
