@@ -22,7 +22,7 @@ import math
 import gtk, gobject, gtk.gdk
 import numpy
 import matplotlib.figure
-import matplotlib.backends.backend_gtk
+import matplotlib.backends.backend_gtkagg
 
 
 bitmaps = [["notebook", "data/bitmaps/plot_notebook.png"],
@@ -124,7 +124,7 @@ class PlotNode(gobject.GObject):
         gobject.GObject.__init__(self)
         self.name = name
         self.figure = matplotlib.figure.Figure()
-        self.plot = matplotlib.backends.backend_gtk.FigureCanvasGTK(self.figure)
+        self.plot = matplotlib.backends.backend_gtkagg.FigureCanvasGTKAgg(self.figure)
 
     def getinfo(self):
         return "Plot: " + self.name
@@ -217,9 +217,9 @@ class SubplotNode(gobject.GObject):
             factor = 1/1.2
 
         if logscale:
-            smin = math.log(smin)
-            scur = math.log(scur)
-            smax = math.log(smax)
+            smin = math.log10(smin)
+            scur = math.log10(scur)
+            smax = math.log10(smax)
 
         smin = scur - (scur - smin)* factor
         smax = scur + (smax - scur)* factor
@@ -238,8 +238,8 @@ class SubplotNode(gobject.GObject):
             d = 1
 
         if logscale:
-            smin = math.log(smin)
-            smax = math.log(smax)
+            smin = math.log10(smin)
+            smax = math.log10(smax)
 
         delta = d * (smax - smin) * factor
         smin = smin + delta
@@ -268,6 +268,7 @@ class SubplotNode(gobject.GObject):
             self.axes.set_yscale('log')
         else:
             self.axes.set_yscale('linear')
+        self.figure.canvas.draw()
 
         self.axes.set_xlabel(self.properties['xlabel'])
         self.axes.set_ylabel(self.properties['ylabel'])
