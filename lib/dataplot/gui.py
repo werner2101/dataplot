@@ -302,61 +302,61 @@ class MainWindow(gtk.Window):
 
     def event_table_activated(self, widget, table):
         colnames = table.datasource.get_columnnames(table.sourcepath)
-        sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
-        source = self.datamodel[widget.get_cursor()[0][0:1]][2]
-        
         dialog = dialogs.TableDataSelection(self, colnames)
         retcode = dialog.run()
 
         if retcode == gtk.RESPONSE_ACCEPT:
             data = dialog.get_content()
-    
-            nthplot = self.plotnotebook.get_current_page()
+            ## FIXME: should be updated in the selection code
+            self.plotmodel.current_plot = self.plotnotebook.get_current_page()
+            sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
+            source = self.datamodel[widget.get_cursor()[0][0:1]][2]
+
             xname = data["x_column"]
             if xname:
                 xnode = plottree.DataNode(xname, "xaxis")
                 xnode.set_data(source, sourcename, table.sourcepath, xname)
             else:
                 xnode = plottree.DataNode('generic', "xaxis")
-            xpath = self.plotmodel.add_node((nthplot,0), xnode)
+            self.plotmodel.add_xdata(xnode)
 
             for yname in data["y_columns"]:
                 ynode = plottree.DataNode(yname, "yaxis")
                 ynode.set_data(source, sourcename, table.sourcepath, yname)
-                ypath = self.plotmodel.add_node(xpath, ynode)
-                self.plotmodel.add_line(ypath)
+                self.plotmodel.add_ydata(ynode)
 
-            self.plottree.expand_row((nthplot,), True)
-            self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
+            self.plottree.expand_row((self.plotmodel.current_plot,), True)
+            self.plotmodel.update_subplot()
+
         dialog.destroy()
 
     def event_array_activated(self, widget, arraynode):
         shape = arraynode.datasource.get_shape(arraynode.sourcepath)
-        sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
-        source = self.datamodel[widget.get_cursor()[0][0:1]][2]
-
         dialog = dialogs.ArrayDataSelection(self, shape)
         retcode = dialog.run()
 
         if retcode == gtk.RESPONSE_ACCEPT:
             data = dialog.get_content()
-            nthplot = self.plotnotebook.get_current_page()
+            ## FIXME: should be updated in the selection code
+            self.plotmodel.current_plot = self.plotnotebook.get_current_page()
+            sourcename = self.datamodel[widget.get_cursor()[0][0:1]][1]
+            source = self.datamodel[widget.get_cursor()[0][0:1]][2]
+            
             xname = data["x_column"]
             if xname:
                 xnode = plottree.DataNode(xname, "xaxis")
                 xnode.set_data(source, sourcename, arraynode.sourcepath, xname)
             else:
                 xnode = plottree.DataNode('generic', "xaxis")
-            xpath = self.plotmodel.add_node((nthplot,0), xnode)
+            self.plotmodel.add_xdata(xnode)
 
             for yname in data["y_columns"]:
                 ynode = plottree.DataNode(arraynode.name + yname, "yaxis")
                 ynode.set_data(source, sourcename, arraynode.sourcepath, yname)
-                ypath = self.plotmodel.add_node(xpath, ynode)
-                self.plotmodel.add_line(ypath)
+                ypath = self.plotmodel.add_ydata(ynode)
 
-            self.plottree.expand_row((nthplot,), True)
-            self.plotmodel.get_value(self.plotmodel.get_iter((nthplot,0)),2).update()
+            self.plottree.expand_row((self.plotmodel.current_plot,), True)
+            self.plotmodel.update_subplot()
 
         dialog.destroy()
         
@@ -449,6 +449,7 @@ class MainWindow(gtk.Window):
         dom = xml.dom.minidom.parse(filename)
         data = dom.getElementsByTagName("dataplot")[0]
         sources = data.getElementsByTagName("datasources")[0]
+        plotdata = data.getElementsByTagName("plotdata")[0]
         
         for s in sources.getElementsByTagName("datasource"):
             plugin = s.getAttribute("plugin")
@@ -457,11 +458,12 @@ class MainWindow(gtk.Window):
             source_dict[name] = self.data_load(source_filename, name,
                                                self.plugins[plugin])
 
-        plotdata = data.getElementsByTagName("plotdata")[0]
-        for ip, plot in enumerate(plotdata.getElementsByTagName("plot")):
-            sp_path = self.new_plot(plot.getAttribute("name"))
-            for isp, subplot in enumerate(plot.getElementsByTagName("subplot")):
-                for ix, xaxis in enumerate(subplot.getElementsByTagName("xaxis")):
+        for plot in plotdata.getElementsByTagName("plot"):
+            self.new_plot(plot.getAttribute("name"))
+            for subplot in plot.getElementsByTagName("subplot"):
+                properties = subplot.getElementsByTagName("properties")[0]
+                self.plotmodel.set_subplot_properties(dict(properties.attributes.items()))
+                for xaxis in subplot.getElementsByTagName("xaxis"):
                     xnode = plottree.DataNode(xaxis.getAttribute("name"), "xaxis")
                     xsource = xaxis.getElementsByTagName("datasource")[0]
                     if xsource.getAttribute("source") != "":
@@ -469,31 +471,24 @@ class MainWindow(gtk.Window):
                                        xsource.getAttribute("source"),
                                        xsource.getAttribute("path"),
                                        xsource.getAttribute("slicer"))
-                    xpath = self.plotmodel.add_node((ip,isp), xnode)
-                    for iy, yaxis in enumerate(xaxis.getElementsByTagName("yaxis")):
+                    self.plotmodel.add_xdata(xnode)
+                    for yaxis in xaxis.getElementsByTagName("yaxis"):
                         ynode = plottree.DataNode(yaxis.getAttribute("name"), "yaxis")
                         ysource = yaxis.getElementsByTagName("datasource")[0]
                         ynode.set_data(source_dict[ysource.getAttribute("source")],
                                        ysource.getAttribute("source"),
                                        ysource.getAttribute("path"),
                                        ysource.getAttribute("slicer"))
-                        ypath = self.plotmodel.add_node((ip,isp,ix), ynode)
-                        self.plotmodel.add_line(ypath)
-
-                properties = subplot.getElementsByTagName("properties")[0]
-                self.plotmodel[ip,isp][2].set_properties(dict(properties.attributes.items()))
-                self.plotmodel[ip,isp][2].update()
+                        self.plotmodel.add_ydata(ynode)
+                self.plotmodel.update_subplot()
                         
-
     def new_plot(self, name):
         plot = plottree.PlotNode(name)
-        path = self.plotmodel.add_node(None, plot)
-        subplot = plottree.SubplotNode(name, plot.figure)
-        path = self.plotmodel.add_node(path, subplot)
+        self.plotmodel.add_plot(plot)
+        self.plotmodel.add_subplot(plottree.SubplotNode(name, plot.figure))
         self.plotnotebook.append_page(plot.plot, gtk.Label(name))
         plot.plot.show()
         self.plotnotebook.set_current_page(-1)
-        return path
 
     def delete_plot(self, nth = None):
         """

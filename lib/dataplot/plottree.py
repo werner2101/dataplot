@@ -87,22 +87,47 @@ class PlotModel(gtk.TreeStore):
                                gtk.gdk.Pixbuf,
                                gobject.TYPE_STRING,
                                gobject.TYPE_OBJECT)
+        self.current_plot = 0
+        self.current_subplot = 0
+        self.current_xdata = 0
+        self.current_ydata = 0
 
         self.icons = {}
         for name,filename in bitmaps:
             self.icons[name] = gtk.gdk.pixbuf_new_from_file(filename)
 
-    
+    def add_plot(self, plotobject):
+        path = self.add_node(None, plotobject)
+        self.current_plot = path[0]
+
+    def add_subplot(self, subplotobject):
+        path = self.add_node((self.current_plot,), subplotobject)
+        self.current_subplot = path[1]
+
+    def add_xdata(self, xdataobject):
+        path = self.add_node((self.current_plot, self.current_subplot),
+                             xdataobject)
+        self.current_xdata = path[2]
+
+    def add_ydata(self, ydataobject):
+        path = self.add_node((self.current_plot, self.current_subplot,
+                              self.current_xdata), ydataobject)
+        self.current_ydata = path[3]
+        self.add_line()
+
     def add_node(self, parentpath, nodeobject):
         if not parentpath:
             i_new = self.append(None)
         else:
             i = self.get_iter(parentpath)
             i_new = self.append(i)
-        self.set(i_new, 0, self.icons[nodeobject.nodetype], 1, nodeobject.name, 2, nodeobject)
+        self.set(i_new, 0, self.icons[nodeobject.nodetype],
+                 1, nodeobject.name, 2, nodeobject)
         return self.get_path(i_new)
 
-    def add_line(self, ypath):
+    def add_line(self):
+        ypath = (self.current_plot, self.current_subplot,
+                 self.current_xdata, self.current_ydata)
         ynode = self.get_value(self.get_iter(ypath), 2)
         xnode = self.get_value(self.get_iter(ypath[0:3]),2)
         subplotnode = self.get_value(self.get_iter(ypath[0:2]),2)
@@ -114,7 +139,14 @@ class PlotModel(gtk.TreeStore):
 
         axes = subplotnode.axes
         ynode.line = axes.plot(xv, yv, label=ynode.name)
-                
+
+    def set_subplot_properties(self, properties):
+        subplotnode = self[self.current_plot, self.current_subplot][2]
+        subplotnode.set_properties(properties)
+
+    def update_subplot(self):
+        subplotnode = self[self.current_plot, self.current_subplot][2]
+        subplotnode.update()
 
 class PlotNode(gobject.GObject):
 
