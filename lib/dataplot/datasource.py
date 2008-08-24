@@ -68,6 +68,37 @@ class DataSource(gobject.GObject):
         print "ERROR: get_data not implemented in that DataSource plugin [%s] " % str(self)
         return None
 
+    def get_slice(self, data, slicer):
+        """
+        get a single one-dimentional array slice of the multidimentional data array.
+        data is a numpy array.
+        slicer is a string that looks like a numpy slice. e.g. "[1,:,4]"
+        """
+        ## convert the slicer string into slice object
+        if len(slicer) < 5:  # at least "[1,:]"
+            raise ValueError, 'slice description too short: "%s"' % slicer
+
+        toks = slicer[1:-1].split(',')
+
+        if len(toks) != len(data.shape):
+            raise ValueError, 'length of slicer "%s" does not match the' \
+                  'data.ndim [%i]' % (slicer, data.ndim)
+
+        slice_obj = []
+
+        for t,s in zip(toks, data.shape):
+            if t == ':':
+                slice_obj.append(slice(None,None,None))
+            elif int(t) > -1 and int(t) < s:
+                slice_obj.append(slice(int(t), int(t)+1))
+            else:
+                raise ValueError, 'problem with slicer "%s", ' \
+                      'data.shape %s' %(slicer, str(data.shape))
+
+        # slicing with the slice object delivers an ndim array, even if only
+        # a onedimensional array is in that array. --> flatten it.
+        return data[tuple(slice_obj)].flatten()
+
     def get_shape(self, path):
         """
         This function is required to get the shape of the multidimensional numpy array

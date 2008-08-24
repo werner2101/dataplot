@@ -332,10 +332,11 @@ class DataNode(gobject.GObject):
         else:
             data = self.datasource.get_data(self.datapath, self.dataslicer)
 
+        # maybe move that code should be move to the datasource plugins
         if len(data.shape) > 1:
-            return eval('data'+self.dataslicer)
-        else:
-            return data
+            data = self.datasource.get_slice(data, self.dataslicer)
+
+        return data
 
     def get_source(self):
         return { "source": self.sourcename,
