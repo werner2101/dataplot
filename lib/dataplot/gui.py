@@ -62,7 +62,6 @@ class MainWindow(gtk.Window):
         ########## development tests
         #self.test()
 
-
     def init_data(self):
         self.filename = None
         self.filechanged = False
@@ -76,7 +75,6 @@ class MainWindow(gtk.Window):
         self.plugins["spice"] = spiceplugin.SpicePlugin
         self.plugins["touchstone"] = touchstoneplugin.TouchstonePlugin
         self.plugins["hdf5"] = hdf5plugin.Hdf5Plugin
-
 
     def init_gui(self):
         self.set_default_size(800,600)
@@ -127,7 +125,7 @@ class MainWindow(gtk.Window):
 
         self.statusbar = gtk.Statusbar()
         self.vbox1.pack_start(self.statusbar, False)
-        
+
 
     def init_menubar(self):
         """
@@ -223,6 +221,21 @@ class MainWindow(gtk.Window):
         button_deleteplot.connect('clicked', self.event_delete_plot)
         toolbar.add(button_deleteplot)
 
+        #TODO: insert space
+
+        button_zoom_fit = gtk.ToolButton(gtk.STOCK_ZOOM_FIT)
+        button_zoom_fit.connect('clicked', self.event_zoom_fit)
+        toolbar.add(button_zoom_fit)
+
+        button_zoom_in = gtk.ToolButton(gtk.STOCK_ZOOM_IN)
+        button_zoom_in.connect('clicked', self.event_zoom_in)
+        toolbar.add(button_zoom_in)
+
+        button_zoom_out = gtk.ToolButton(gtk.STOCK_ZOOM_OUT)
+        button_zoom_out.connect('clicked', self.event_zoom_out)
+        toolbar.add(button_zoom_out)
+        
+        
         
     #################### events
     def event_file_new(self, menuitem):
@@ -387,6 +400,15 @@ class MainWindow(gtk.Window):
         ## recreate one empty plot if we've deleted the last plot
         if self.plotnotebook.get_n_pages() == 0:
             self.new_plot("plot1")
+
+    def event_zoom_fit(self, widget):
+        print "event_zoom_fit not implemented yet"
+
+    def event_zoom_in(self, widget):
+        print "event_zoom_in not implemented yet"
+
+    def event_zoom_out(self, widget):
+        print "event_zoom_out not implemented yet"
         
 
 
