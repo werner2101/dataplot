@@ -309,10 +309,13 @@ class SubplotNode(gobject.GObject):
         self.axes.grid(self.lookup[self.properties['grid']])
 
         if self.properties['legend'] == "1":
-            self.axes.legend(loc='best')
+            l = self.axes.legend(loc='best')
+            if l:
+                l.set_visible(True)
         else:
-            l = self.axes.legend(())
-            l.draw_frame(False)
+            l = self.axes.legend()
+            if l:
+                l.set_visible(False)
                              
         self.axes.axis('auto')
         if (self.properties["xmin"]) != "":
