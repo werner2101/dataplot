@@ -120,7 +120,7 @@ class touchstone():
             # indicator for the start of the noise section
             # each set of the s-parameter section is 9 values long
             pos = numpy.where(numpy.sign(numpy.diff(values[::9])) == -1)
-            if len(pos) != 0:
+            if len(pos[0]) != 0:
                 # we have noise data in the values
                 pos = pos[0][0] + 1   # add 1 because diff reduced it by 1
                 noise_values = values[pos*9:]
@@ -222,7 +222,7 @@ class touchstone():
         v = self.sparameters
 
         if self.format == 'ri':
-            v_complex = numpy.absolute(v[:,1::2] + 1j* v[:,2::2])
+            v_complex = v[:,1::2] + 1j* v[:,2::2]
         elif self.format == 'ma':
             v_complex = (v[:,1::2] * numpy.exp(1j*numpy.pi/360 * v[:,2::2]))
         elif self.format == 'db':
